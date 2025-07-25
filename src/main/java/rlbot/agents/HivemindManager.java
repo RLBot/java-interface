@@ -1,9 +1,10 @@
-package rlbot;
+package rlbot.agents;
 
 import rlbot.flat.ControllerStateT;
 import rlbot.flat.MatchCommT;
 import rlbot.flat.PlayerInputT;
 import rlbot.flat.SetLoadoutT;
+import rlbot.protocol.RLBotInterface;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,7 @@ public class HivemindManager extends AgentBaseManager {
         indices = Arrays.stream(info.getControllables()).map(a -> (int) a.getIndex()).toList();
         var names = indices.stream().collect(Collectors.toMap(i -> i, i -> playerConfs[i].getVariety().asCustomBot().getName()));
 
-        hivemind = hivemindFactory.create(indices, team, names, getAgentId(), getMatchConfig(), getFieldInfo());
+        hivemind = hivemindFactory.create(getRlbotInterface(), indices, team, names, getAgentId(), getMatchConfig(), getFieldInfo());
 
         var loadouts = hivemind.getInitialLoadouts();
         if (loadouts != null) {

@@ -1,6 +1,9 @@
-package rlbot;
+package rlbot.agents;
 
 import rlbot.flat.*;
+import rlbot.protocol.ConnectSettings;
+import rlbot.protocol.CorePacketListenerAdapter;
+import rlbot.protocol.RLBotInterface;
 
 import java.util.logging.Logger;
 
@@ -84,17 +87,19 @@ public abstract class AgentBaseManager extends CorePacketListenerAdapter {
         tryInitialize();
     }
 
-    public void run(boolean wantsMatchComms, boolean wantsBallPrediction) {
-        String portRaw = System.getenv("RLBOT_SERVER_PORT");
-        int port = portRaw == null ? RLBotInterface.DEFAULT_SERVER_PORT : Integer.parseInt(portRaw);
-        rlbot.connect(agentId, wantsMatchComms, wantsBallPrediction, true, port);
+    public void run() {
+        run(ConnectSettings.WANTS_BALL_PRED | ConnectSettings.WANTS_MATCH_COMMS);
+    }
+
+    public void run(int flags) {
+        rlbot.connect(agentId, flags & ~ConnectSettings.OUTLIVE_MATCHES);
 
         try {
             while (true) {
-                var res = rlbot.handleIncomingMsgs(latestGamePacket == null);
+                var res = rlbot.handleNextIncomingMsg(latestGamePacket == null);
 
                 switch (res) {
-                    case Terminated:
+                    case Termination:
                         return;
                     case MoreMsgsQueued:
                         continue;

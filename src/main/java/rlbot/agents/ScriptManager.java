@@ -1,6 +1,7 @@
-package rlbot;
+package rlbot.agents;
 
 import rlbot.flat.MatchCommT;
+import rlbot.protocol.RLBotInterface;
 
 public class ScriptManager extends AgentBaseManager {
 
@@ -20,7 +21,7 @@ public class ScriptManager extends AgentBaseManager {
         index = (int) agent.getIndex();
         name = getMatchConfig().getScriptConfigurations()[index].getName();
 
-        script = scriptFactory.create(index, getAgentId(), getMatchConfig(), getFieldInfo());
+        script = scriptFactory.create(getRlbotInterface(), index, getAgentId(), getMatchConfig(), getFieldInfo());
     }
 
     @Override

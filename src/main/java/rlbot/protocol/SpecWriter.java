@@ -1,4 +1,4 @@
-package rlbot;
+package rlbot.protocol;
 
 import com.google.flatbuffers.FlatBufferBuilder;
 import rlbot.flat.InterfaceMessageUnion;
@@ -7,7 +7,6 @@ import rlbot.flat.InterfacePacketT;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.logging.Logger;
@@ -41,7 +40,7 @@ public class SpecWriter {
             logger.severe("Cannot send message because size of payload (" + size + ") exceeds maximum representable by two bytes");
         }
 
-        // Prepend size
+        // Prepend size, big endian
         bb.position(bb.position() - 2);
         bb.put(bb.position(), (byte) (size >> 8 & 0xFF));
         bb.put(bb.position() + 1, (byte) (size & 0xFF));

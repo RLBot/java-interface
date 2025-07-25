@@ -1,4 +1,4 @@
-package rlbot;
+package rlbot.agents;
 
 import rlbot.flat.ControllerStateT;
 import rlbot.flat.GamePacketT;

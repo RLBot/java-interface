@@ -1,3 +1,133 @@
 # RLBot Java Interface
 
+TODO:
+- [ ] How is ball pred passed to bots??
+- [ ] Doc strings
+- [ ] Renderer
+- [ ] DesiredGameStateBuilder
 
+## Examples
+
+**Running a bot**
+
+```java
+package org.rlbot;
+
+import rlbot.agents.BotManager;
+import rlbot.protocol.RLBotInterface;
+
+public class Main {
+    public static void main(String[] args) {
+        var rlbot = new RLBotInterface();
+        var botManager = new BotManager(rlbot, "rlbot/java/example", Atba::new);
+        botManager.run();
+    }
+}
+```
+
+```java
+package org.rlbot;
+
+import rlbot.agents.Bot;
+import rlbot.flat.*;
+import rlbot.protocol.RLBotInterface;
+
+public class Atba implements Bot {
+
+    public static final float PI = (float) Math.PI;
+
+    private final RLBotInterface rlbot;
+    public final int index;
+    public final int team;
+    public final String name;
+    public final String agentId;
+    public final MatchConfigurationT matchConfig;
+    public final FieldInfoT fieldInfo;
+
+    public Atba(RLBotInterface rlbot, int index, int team, String name, String agentId, MatchConfigurationT matchConfig, FieldInfoT fieldInfo) {
+        this.rlbot = rlbot;
+        this.index = index;
+        this.team = team;
+        this.name = name;
+        this.agentId = agentId;
+        this.matchConfig = matchConfig;
+        this.fieldInfo = fieldInfo;
+    }
+
+    @Override
+    public PlayerLoadoutT getInitialLoadout() {
+        // Returning null means we will use the loadout_file from the bot.toml config.
+        // Alternatively, we could programmatically define our loadout here.
+        return null;
+    }
+
+    @Override
+    public ControllerStateT getOutput(GamePacketT packet) {
+        // Decide what to do this tick
+
+        var controller = new ControllerStateT();
+        controller.setThrottle(1f);
+
+        if (packet.getBalls().length > 0) {
+
+            var player = packet.getPlayers()[index];
+            var playerLoc = player.getPhysics().getLocation();
+            var ballLoc = packet.getBalls()[0].getPhysics().getLocation();
+            var curYaw = player.getPhysics().getRotation().getYaw();
+            var desiredYaw = (float) Math.atan2(ballLoc.getY() - playerLoc.getY(), ballLoc.getX() - playerLoc.getX());
+            var correction = (desiredYaw - curYaw + 2 * PI) % (2 * PI) - PI;
+            controller.setSteer(-correction);
+        }
+
+        return controller;
+    }
+
+    @Override
+    public void onMatchCommReceived(MatchCommT comm) {
+        // Somebody sent us a message
+    }
+
+    @Override
+    public void onRetire() {
+        // We are shutting down
+    }
+}
+```
+
+**Starting a match**
+
+```java
+package org.rlbot;
+
+import rlbot.flat.GamePacketT;
+import rlbot.flat.MatchPhase;
+import rlbot.protocol.ConnectSettings;
+import rlbot.protocol.CorePacketListenerAdapter;
+import rlbot.protocol.RLBotInterface;
+
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
+
+public class Main extends CorePacketListenerAdapter {
+
+    int lastMatchPhase = MatchPhase.Inactive;
+
+    public static void main(String[] args) throws FileNotFoundException {
+        var rlbot = new RLBotInterface();
+        rlbot.tryLaunchRLBotServer();
+        rlbot.connect("", ConnectSettings.OUTLIVE_MATCHES);
+        rlbot.startMatch(Paths.get("match.toml"));
+        rlbot.addListener(new Main());
+        rlbot.run();
+    }
+
+    @Override
+    public void onGamePacketCallback(GamePacketT packet) {
+        if (lastMatchPhase != packet.getMatchInfo().getMatchPhase()) {
+            lastMatchPhase = packet.getMatchInfo().getMatchPhase();
+            var name = MatchPhase.name(lastMatchPhase);
+            System.out.println("MatchPhase changed: " + name);
+        }
+    }
+}
+```

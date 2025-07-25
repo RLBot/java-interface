@@ -1,6 +1,7 @@
-package rlbot;
+package rlbot.agents;
 
 import rlbot.flat.*;
+import rlbot.protocol.RLBotInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class BotManager extends AgentBaseManager {
         for (var agent : agents) {
             var index = (int) agent.getIndex();
             var name = playerConfs[index].getVariety().asCustomBot().getName();
-            var bot = botFactory.create(index, team, name, getAgentId(), getMatchConfig(), getFieldInfo());
+            var bot = botFactory.create(getRlbotInterface(), index, team, name, getAgentId(), getMatchConfig(), getFieldInfo());
             var running = new AtomicBoolean(true);
             var queue = new ArrayBlockingQueue<GamePacketT>(1);
             var process = new BotProcess(bot, name, index, running, queue);

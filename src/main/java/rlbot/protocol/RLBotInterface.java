@@ -1,4 +1,4 @@
-package rlbot;
+package rlbot.protocol;
 
 import rlbot.flat.*;
 
@@ -8,12 +8,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class RLBotInterface {
+public class RLBotInterface implements Runnable {
 
     public static final int DEFAULT_SERVER_PORT = 23234;
 
@@ -35,6 +34,7 @@ public class RLBotInterface {
 
     private boolean isConnected = false;
     private boolean isRunning = false;
+    private ProcessHandle serverProcess;
 
     public RLBotInterface() {
         this(120);
@@ -113,7 +113,7 @@ public class RLBotInterface {
         sendFlatbufferMsg(msg);
     }
 
-    public void sendStopMatch(boolean shutdownRLBot) {
+    public void stopMatch(boolean shutdownRLBot) {
         var stop = new StopCommandT();
         stop.setShutdownServer(shutdownRLBot);
         var msg = new InterfaceMessageUnion();
@@ -122,14 +122,16 @@ public class RLBotInterface {
         sendFlatbufferMsg(msg);
     }
 
-    public void sendStartMatch(MatchConfigurationT matchConfig) {
+    public void startMatch(MatchConfigurationT matchConfig) {
         var msg = new InterfaceMessageUnion();
         msg.setType(InterfaceMessage.MatchConfiguration);
         msg.setValue(matchConfig);
         sendFlatbufferMsg(msg);
+        logger.info("Starting match");
+        sendInitComplete();
     }
 
-    public void sendStartMatch(Path matchConfigPath) throws FileNotFoundException {
+    public void startMatch(Path matchConfigPath) throws FileNotFoundException {
         if (!Files.exists(matchConfigPath)) {
             throw new FileNotFoundException(matchConfigPath.toString());
         } else if (!Files.isRegularFile(matchConfigPath)) {
@@ -141,62 +143,80 @@ public class RLBotInterface {
         msg.setType(InterfaceMessage.StartCommand);
         msg.setValue(start);
         sendFlatbufferMsg(msg);
+        logger.info("Starting match");
+        sendInitComplete();
     }
 
-    public void connect(String agentId, boolean wantsMatchComms, boolean wantsBallPrediction, boolean closeBetweenMatches, int rlbotServerPort) {
-        if (isConnected) {
-            throw new RuntimeException("Already connected");
+    public boolean tryLaunchRLBotServer() {
+        return tryLaunchRLBotServer(true);
+    }
+
+    public boolean tryLaunchRLBotServer(boolean lookInCwd) {
+        var binName = RLBotServerUtils.defaultBinName();
+
+        var optionalServerProcess = RLBotServerUtils.findServerProcess(binName);
+        if (optionalServerProcess.isPresent()) {
+            this.serverProcess = optionalServerProcess.get();
+            logger.info("RLBotServer is already running");
+            return true;
         }
 
-        var beginTime = System.currentTimeMillis();
-        var nextWarning = 10_000;
-        while (System.currentTimeMillis() < beginTime + connectionTimeout * 1000) {
-            try {
-                socket.connect(new InetSocketAddress("127.0.0.1", rlbotServerPort));
-                socket.setSoTimeout(0);
-                isConnected = true;
-                break;
+        if (lookInCwd) {
+            var cwd = Paths.get("").toAbsolutePath();
+            try (var stream = Files.find(cwd, 10, (path, attr) -> Files.isRegularFile(path) && path.endsWith(binName))) {
+                var optionalBin = stream.findAny();
+                if (optionalBin.isPresent()) {
+                    logger.info("Launching " + binName + " in cwd");
+                    this.serverProcess = new ProcessBuilder("cmd", "/c", "start", "cmd", "/k", optionalBin.get().toAbsolutePath().toString())
+                            .start()
+                            .toHandle();
+                    Thread.sleep(50);
+                    return true;
+                }
+
             } catch (IOException e) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ignored) {
-
-                }
-
-                if (System.currentTimeMillis() > beginTime + nextWarning) {
-                    nextWarning *= 2;
-                    logger.warning("Failing to connect to RLBot on port " + rlbotServerPort + ". Trying again ...");
-                }
+                logger.severe("Error while trying to find and launch " + binName + " in cwd: " + e.getMessage());
+                return false;
+            } catch (InterruptedException ignored) {
+                return true;
             }
         }
 
-        if (!isConnected) {
-            throw new RuntimeException("Failed to establish connection. Ensure that the RLBotServer is running. If you are using the RLBotInterface directly, try calling ensureServerStarted() before connecting.");
-        }
-
         try {
-            in = new SpecReader(socket.getInputStream());
-            out = new SpecWriter(socket.getOutputStream());
+            var binPath = RLBotServerUtils.defaultInstallDir().resolve(binName);
+            if (!Files.exists(binPath)) {
+                return false;
+            }
+
+            logger.info("Launching installed " + binName);
+            this.serverProcess = new ProcessBuilder("cmd", "/c", "start", "cmd", "/k", binPath.toAbsolutePath().toString())
+                    .start()
+                    .toHandle();
+            Thread.sleep(50);
+            return true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.severe("Error while trying to launch installed " + binName + ": " + e.getMessage());
+            return false;
+        } catch (InterruptedException ignored) {
+            return true;
         }
+    }
 
-        logger.info("Connected to RLBot on port " + rlbotServerPort + " from port " + socket.getLocalPort());
-
-        var connectionSettings = new ConnectionSettingsT();
-        connectionSettings.setAgentId(agentId);
-        connectionSettings.setWantsBallPredictions(wantsBallPrediction);
-        connectionSettings.setWantsComms(wantsMatchComms);
-        connectionSettings.setCloseBetweenMatches(closeBetweenMatches);
-
-        var msg = new InterfaceMessageUnion();
-        msg.setType(InterfaceMessage.ConnectionSettings);
-        msg.setValue(connectionSettings);
-        sendFlatbufferMsg(msg);
-
-        for (var listener : listeners) {
-            listener.onConnectCallback();
+    public void shutdownRLBotServer(boolean force) {
+        stopMatch(true);
+        if (serverProcess != null && force) {
+            serverProcess.destroy();
         }
+        serverProcess = null;
+    }
+
+    @Override
+    public void run() {
+        run(false);
+    }
+
+    public void runInBackground() {
+        run(true);
     }
 
     public void run(boolean inBackgroundThread) {
@@ -213,7 +233,7 @@ public class RLBotInterface {
         } else {
             isRunning = true;
             while (isRunning && isConnected) {
-                isRunning = handleIncomingMsgs(true) != MsgHandlingResult.Terminated;
+                isRunning = handleNextIncomingMsg(true) != MsgHandlingResult.Termination;
             }
             isRunning = false;
         }
@@ -221,12 +241,12 @@ public class RLBotInterface {
 
     public enum MsgHandlingResult
     {
-        Terminated,
+        Termination,
         NoIncomingMsgs,
-        MoreMsgsQueued,
-    }
+        MoreMsgsQueued
 
-    public MsgHandlingResult handleIncomingMsgs(boolean blocking) {
+    }
+    public MsgHandlingResult handleNextIncomingMsg(boolean blocking) {
         if (!isConnected) {
             throw new RuntimeException("Connection has not been established.");
         }
@@ -238,13 +258,13 @@ public class RLBotInterface {
             var packet = in.readOne().unpack();
 
             try {
-                return handleIncomingMsg(packet) ? MsgHandlingResult.MoreMsgsQueued : MsgHandlingResult.Terminated;
+                return handleIncomingMsg(packet) ? MsgHandlingResult.MoreMsgsQueued : MsgHandlingResult.Termination;
             } catch (Exception e) {
                 var typeIndex = packet.getMessage().getType();
                 var typeName = InterfaceMessage.name(typeIndex);
                 logger.severe("Unexpected error while handling message of type " + typeName);
                 e.printStackTrace();
-                return MsgHandlingResult.Terminated;
+                return MsgHandlingResult.Termination;
             }
 
         } catch (SocketTimeoutException e) {
@@ -254,7 +274,6 @@ public class RLBotInterface {
             throw new RuntimeException(e);
         }
     }
-
     private boolean handleIncomingMsg(CorePacketT packet) {
         CoreMessageUnion msg = packet.getMessage();
         for (var listener : listeners) {
@@ -314,6 +333,76 @@ public class RLBotInterface {
                 break;
         }
         return true;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void stopRunning() {
+        isRunning = false;
+    }
+
+    public void connect(String agentId, int flags) {
+        String portRaw = System.getenv("RLBOT_SERVER_PORT");
+        int port = portRaw == null ? RLBotInterface.DEFAULT_SERVER_PORT : Integer.parseInt(portRaw);
+        connect(agentId, port, flags);
+    }
+
+    public void connect(String agentId, int rlbotServerPort, int flags) {
+        if (isConnected) {
+            return;
+        }
+
+        var beginTime = System.currentTimeMillis();
+        var nextWarning = 10_000;
+        while (System.currentTimeMillis() < beginTime + connectionTimeout * 1000) {
+            try {
+                socket.connect(new InetSocketAddress("127.0.0.1", rlbotServerPort));
+                socket.setSoTimeout(0);
+                isConnected = true;
+                break;
+            } catch (IOException e) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+
+                }
+
+                if (System.currentTimeMillis() > beginTime + nextWarning) {
+                    nextWarning *= 2;
+                    logger.warning("Failing to connect to RLBot on port " + rlbotServerPort + ". Trying again ...");
+                }
+            }
+        }
+
+        if (!isConnected) {
+            throw new RuntimeException("Failed to establish connection. Ensure that the RLBotServer is running. If you are using the RLBotInterface directly, try calling ensureServerStarted() before connecting.");
+        }
+
+        try {
+            in = new SpecReader(socket.getInputStream());
+            out = new SpecWriter(socket.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        logger.info("Connected to RLBot on port " + rlbotServerPort + " from port " + socket.getLocalPort());
+
+        var connectionSettings = new ConnectionSettingsT();
+        connectionSettings.setAgentId(agentId);
+        connectionSettings.setWantsBallPredictions((ConnectSettings.WANTS_BALL_PRED & flags) > 0);
+        connectionSettings.setWantsComms((ConnectSettings.WANTS_MATCH_COMMS & flags) > 0);
+        connectionSettings.setCloseBetweenMatches((ConnectSettings.OUTLIVE_MATCHES & flags) == 0);
+
+        var msg = new InterfaceMessageUnion();
+        msg.setType(InterfaceMessage.ConnectionSettings);
+        msg.setValue(connectionSettings);
+        sendFlatbufferMsg(msg);
+
+        for (var listener : listeners) {
+            listener.onConnectCallback();
+        }
     }
 
     public void disconnect() {
