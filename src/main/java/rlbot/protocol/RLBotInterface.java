@@ -28,7 +28,7 @@ public class RLBotInterface implements Runnable {
     private SpecReader in;
     private SpecWriter out;
 
-    private final ArrayList<CorePacketListener> listeners = new ArrayList<>();
+    private final ArrayList<RLBotListener> listeners = new ArrayList<>();
 
     private final int connectionTimeout;
 
@@ -44,11 +44,11 @@ public class RLBotInterface implements Runnable {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public void addListener(CorePacketListener listener) {
+    public void addListener(RLBotListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(CorePacketListener listener) {
+    public void removeListener(RLBotListener listener) {
         listeners.remove(listener);
     }
 
@@ -277,55 +277,55 @@ public class RLBotInterface implements Runnable {
     private boolean handleIncomingMsg(CorePacketT packet) {
         CoreMessageUnion msg = packet.getMessage();
         for (var listener : listeners) {
-            listener.onAnyMessageCallback(packet);
+            listener.onAnyMessage(packet);
         }
         switch (msg.getType()) {
             case CoreMessage.NONE:
             case CoreMessage.DisconnectSignal:
                 for (var listener : listeners) {
-                    listener.onDisconnectCallback();
+                    listener.onDisconnect();
                 }
                 return false;
             case CoreMessage.GamePacket:
                 var gp = msg.asGamePacket();
                 for (var listener : listeners) {
-                    listener.onGamePacketCallback(gp);
+                    listener.onGamePacket(gp);
                 }
                 break;
             case CoreMessage.FieldInfo:
                 var fieldInfo = msg.asFieldInfo();
                 for (var listener : listeners) {
-                    listener.onFieldInfoCallback(fieldInfo);
+                    listener.onFieldInfo(fieldInfo);
                 }
                 break;
             case CoreMessage.MatchConfiguration:
                 var config = msg.asMatchConfiguration();
                 for (var listener : listeners) {
-                    listener.onMatchConfigCallback(config);
+                    listener.onMatchConfig(config);
                 }
                 break;
             case CoreMessage.MatchComm:
                 var comm = msg.asMatchComm();
                 for (var listener : listeners) {
-                    listener.onMatchCommsCallback(comm);
+                    listener.onMatchComms(comm);
                 }
                 break;
             case CoreMessage.BallPrediction:
                 var prediction = msg.asBallPrediction();
                 for (var listener : listeners) {
-                    listener.onBallPredictionCallback(prediction);
+                    listener.onBallPrediction(prediction);
                 }
                 break;
             case CoreMessage.ControllableTeamInfo:
                 var teamInfo = msg.asControllableTeamInfo();
                 for (var listener : listeners) {
-                    listener.onControllableTeamInfoCallback(teamInfo);
+                    listener.onControllableTeamInfo(teamInfo);
                 }
                 break;
             case CoreMessage.RenderingStatus:
                 var status = msg.asRenderingStatus();
                 for (var listener : listeners) {
-                    listener.onRenderingStatusCallback(status);
+                    listener.onRenderingStatus(status);
                 }
                 break;
             default:
@@ -401,7 +401,7 @@ public class RLBotInterface implements Runnable {
         sendFlatbufferMsg(msg);
 
         for (var listener : listeners) {
-            listener.onConnectCallback();
+            listener.onConnect();
         }
     }
 
@@ -440,7 +440,7 @@ public class RLBotInterface implements Runnable {
         isConnected = false;
 
         for (var listener : listeners) {
-            listener.onDisconnectCallback();
+            listener.onDisconnect();
         }
     }
 

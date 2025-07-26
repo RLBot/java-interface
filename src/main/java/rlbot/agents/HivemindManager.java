@@ -51,7 +51,7 @@ public class HivemindManager extends AgentBaseManager {
         }
         Map<Integer, ControllerStateT> controllers;
         try {
-            controllers = hivemind.getOutputs(latestGamePacket);
+            controllers = hivemind.getOutputs(latestGamePacket, latestBallPrediction);
         } catch (Exception e) {
             logger.severe("Hivemind '" + getAgentId() + "' (team " + team + ") encountered an error while processing game packet: " + e.getMessage());
             return;
@@ -76,7 +76,7 @@ public class HivemindManager extends AgentBaseManager {
     }
 
     @Override
-    public void onMatchCommsCallback(MatchCommT comm) {
+    public void onMatchComms(MatchCommT comm) {
         if (hivemind == null) {
             return;
         }

@@ -2,12 +2,12 @@ package rlbot.agents;
 
 import rlbot.flat.*;
 import rlbot.protocol.ConnectSettings;
-import rlbot.protocol.CorePacketListenerAdapter;
+import rlbot.protocol.RLBotListenerAdapter;
 import rlbot.protocol.RLBotInterface;
 
 import java.util.logging.Logger;
 
-public abstract class AgentBaseManager extends CorePacketListenerAdapter {
+public abstract class AgentBaseManager extends RLBotListenerAdapter {
 
     protected final Logger logger = Logger.getLogger(AgentBaseManager.class.getName());
 
@@ -57,31 +57,31 @@ public abstract class AgentBaseManager extends CorePacketListenerAdapter {
     abstract void initialize();
 
     @Override
-    public void onGamePacketCallback(GamePacketT packet) {
+    public void onGamePacket(GamePacketT packet) {
         latestGamePacket = packet;
     }
 
     @Override
-    public void onFieldInfoCallback(FieldInfoT fieldInfo) {
+    public void onFieldInfo(FieldInfoT fieldInfo) {
         this.fieldInfo = fieldInfo;
         logger.info("Received field info!");
         tryInitialize();
     }
 
     @Override
-    public void onMatchConfigCallback(MatchConfigurationT config) {
+    public void onMatchConfig(MatchConfigurationT config) {
         this.matchConfig = config;
         logger.info("Received match config!");
         tryInitialize();
     }
 
     @Override
-    public void onBallPredictionCallback(BallPredictionT prediction) {
+    public void onBallPrediction(BallPredictionT prediction) {
         this.latestBallPrediction = prediction;
     }
 
     @Override
-    public void onControllableTeamInfoCallback(ControllableTeamInfoT teamInfo) {
+    public void onControllableTeamInfo(ControllableTeamInfoT teamInfo) {
         this.teamInfo = teamInfo;
         logger.info("Received team info!");
         tryInitialize();

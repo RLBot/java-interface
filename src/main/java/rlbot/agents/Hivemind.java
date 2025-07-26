@@ -1,9 +1,6 @@
 package rlbot.agents;
 
-import rlbot.flat.ControllerStateT;
-import rlbot.flat.GamePacketT;
-import rlbot.flat.MatchCommT;
-import rlbot.flat.PlayerLoadoutT;
+import rlbot.flat.*;
 
 import java.util.Map;
 
@@ -11,7 +8,7 @@ public interface Hivemind {
 
     Map<Integer, PlayerLoadoutT> getInitialLoadouts();
 
-    Map<Integer, ControllerStateT> getOutputs(GamePacketT packet);
+    Map<Integer, ControllerStateT> getOutputs(GamePacketT packet, BallPredictionT ballPrediction);
 
     void onMatchCommReceived(MatchCommT comm);
 

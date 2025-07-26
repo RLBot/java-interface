@@ -30,7 +30,7 @@ public class ScriptManager extends AgentBaseManager {
             return;
         }
         try {
-            script.process(latestGamePacket);
+            script.process(latestGamePacket, latestBallPrediction);
         } catch (Exception e) {
             logger.severe(name + " encountered an error while processing game packet: " + e.getMessage());
         }
@@ -44,7 +44,7 @@ public class ScriptManager extends AgentBaseManager {
     }
 
     @Override
-    public void onMatchCommsCallback(MatchCommT comm) {
+    public void onMatchComms(MatchCommT comm) {
         if (script == null) {
             return;
         }

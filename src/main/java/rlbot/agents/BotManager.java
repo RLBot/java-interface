@@ -11,8 +11,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotManager extends AgentBaseManager {
 
+    private record GameTickData(GamePacketT packet, BallPredictionT ballPred) {}
+
     private record BotProcess(Bot bot, String name, int index, AtomicBoolean running,
-                              BlockingQueue<GamePacketT> queue) {}
+                              BlockingQueue<GameTickData> queue) {}
 
     private final BotFactory botFactory;
     private List<BotProcess> botProcesses;
@@ -34,7 +36,7 @@ public class BotManager extends AgentBaseManager {
             var name = playerConfs[index].getVariety().asCustomBot().getName();
             var bot = botFactory.create(getRlbotInterface(), index, team, name, getAgentId(), getMatchConfig(), getFieldInfo());
             var running = new AtomicBoolean(true);
-            var queue = new ArrayBlockingQueue<GamePacketT>(1);
+            var queue = new ArrayBlockingQueue<GameTickData>(1);
             var process = new BotProcess(bot, name, index, running, queue);
             botProcesses.add(process);
             new Thread(() -> botLoop(process)).start();
@@ -54,10 +56,10 @@ public class BotManager extends AgentBaseManager {
     private void botLoop(BotProcess process) {
         try {
             while (process.running.get()) {
-                var packet = process.queue.take(); // Blocking
+                var tick = process.queue.take(); // Blocking
                 ControllerStateT controller;
                 try {
-                    controller = process.bot.getOutput(packet);
+                    controller = process.bot.getOutput(tick.packet, tick.ballPred);
                 } catch (RuntimeException e) {
                     logger.severe(process.name + " encountered an error while processing game packet: " + e.getMessage());
                     return;
@@ -84,7 +86,7 @@ public class BotManager extends AgentBaseManager {
         for (var process : botProcesses) {
             try {
                 process.queue.clear();
-                process.queue.put(latestGamePacket);
+                process.queue.put(new GameTickData(latestGamePacket, latestBallPrediction));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -103,7 +105,7 @@ public class BotManager extends AgentBaseManager {
     }
 
     @Override
-    public void onMatchCommsCallback(MatchCommT comm) {
+    public void onMatchComms(MatchCommT comm) {
         if (botProcesses == null) {
             return;
         }

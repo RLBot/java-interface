@@ -1,7 +1,6 @@
 # RLBot Java Interface
 
 TODO:
-- [ ] How is ball pred passed to bots??
 - [ ] Doc strings
 - [ ] Renderer
 - [ ] DesiredGameStateBuilder
@@ -19,7 +18,7 @@ import rlbot.protocol.RLBotInterface;
 public class Main {
     public static void main(String[] args) {
         var rlbot = new RLBotInterface();
-        var botManager = new BotManager(rlbot, "rlbot/java/example", Atba::new);
+        var botManager = new BotManager(rlbot, "rlbot/java/example", ExampleBot::new);
         botManager.run();
     }
 }
@@ -32,7 +31,7 @@ import rlbot.agents.Bot;
 import rlbot.flat.*;
 import rlbot.protocol.RLBotInterface;
 
-public class Atba implements Bot {
+public class ExampleBot implements Bot {
 
     public static final float PI = (float) Math.PI;
 
@@ -44,7 +43,7 @@ public class Atba implements Bot {
     public final MatchConfigurationT matchConfig;
     public final FieldInfoT fieldInfo;
 
-    public Atba(RLBotInterface rlbot, int index, int team, String name, String agentId, MatchConfigurationT matchConfig, FieldInfoT fieldInfo) {
+    public ExampleBot(RLBotInterface rlbot, int index, int team, String name, String agentId, MatchConfigurationT matchConfig, FieldInfoT fieldInfo) {
         this.rlbot = rlbot;
         this.index = index;
         this.team = team;
@@ -62,7 +61,7 @@ public class Atba implements Bot {
     }
 
     @Override
-    public ControllerStateT getOutput(GamePacketT packet) {
+    public ControllerStateT getOutput(GamePacketT packet, BallPredictionT ballPrediction) {
         // Decide what to do this tick
 
         var controller = new ControllerStateT();
@@ -102,13 +101,13 @@ package org.rlbot;
 import rlbot.flat.GamePacketT;
 import rlbot.flat.MatchPhase;
 import rlbot.protocol.ConnectSettings;
-import rlbot.protocol.CorePacketListenerAdapter;
+import rlbot.protocol.RLBotListenerAdapter;
 import rlbot.protocol.RLBotInterface;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 
-public class Main extends CorePacketListenerAdapter {
+public class Main extends RLBotListenerAdapter {
 
     int lastMatchPhase = MatchPhase.Inactive;
 
