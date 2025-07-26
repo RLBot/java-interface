@@ -1,7 +1,6 @@
 package rlbot.agents;
 
 import rlbot.flat.*;
-import rlbot.protocol.ConnectSettings;
 import rlbot.protocol.RLBotListenerAdapter;
 import rlbot.protocol.RLBotInterface;
 
@@ -88,11 +87,11 @@ public abstract class AgentBaseManager extends RLBotListenerAdapter {
     }
 
     public void run() {
-        run(ConnectSettings.WANTS_BALL_PRED | ConnectSettings.WANTS_MATCH_COMMS);
+        run(true, true);
     }
 
-    public void run(int flags) {
-        rlbot.connect(agentId, flags & ~ConnectSettings.OUTLIVE_MATCHES);
+    public void run(boolean wantsBallPrediction, boolean wantsComms) {
+        rlbot.connect(agentId, wantsBallPrediction, wantsComms, false);
 
         try {
             while (true) {

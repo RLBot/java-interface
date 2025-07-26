@@ -343,13 +343,21 @@ public class RLBotInterface implements Runnable {
         isRunning = false;
     }
 
-    public void connect(String agentId, int flags) {
-        String portRaw = System.getenv("RLBOT_SERVER_PORT");
-        int port = portRaw == null ? RLBotInterface.DEFAULT_SERVER_PORT : Integer.parseInt(portRaw);
-        connect(agentId, port, flags);
+    public void connectAsMatchHost() {
+        connect("", false, false, true);
     }
 
-    public void connect(String agentId, int rlbotServerPort, int flags) {
+    public void connectAsMatchHost(boolean wantsBallPredictions, boolean wantsComms) {
+        connect("", wantsBallPredictions, wantsComms, true);
+    }
+
+    public void connect(String agentId, boolean wantsBallPredictions, boolean wantsComms, boolean outliveMatches) {
+        String portRaw = System.getenv("RLBOT_SERVER_PORT");
+        int port = portRaw == null ? RLBotInterface.DEFAULT_SERVER_PORT : Integer.parseInt(portRaw);
+        connect(agentId, wantsBallPredictions, wantsComms, outliveMatches, port);
+    }
+
+    public void connect(String agentId, boolean wantsBallPredictions, boolean wantsComms, boolean outliveMatches, int rlbotServerPort) {
         if (isConnected) {
             return;
         }
@@ -391,9 +399,9 @@ public class RLBotInterface implements Runnable {
 
         var connectionSettings = new ConnectionSettingsT();
         connectionSettings.setAgentId(agentId);
-        connectionSettings.setWantsBallPredictions((ConnectSettings.WANTS_BALL_PRED & flags) > 0);
-        connectionSettings.setWantsComms((ConnectSettings.WANTS_MATCH_COMMS & flags) > 0);
-        connectionSettings.setCloseBetweenMatches((ConnectSettings.OUTLIVE_MATCHES & flags) == 0);
+        connectionSettings.setWantsBallPredictions(wantsBallPredictions);
+        connectionSettings.setWantsComms(wantsComms);
+        connectionSettings.setCloseBetweenMatches(!outliveMatches);
 
         var msg = new InterfaceMessageUnion();
         msg.setType(InterfaceMessage.ConnectionSettings);

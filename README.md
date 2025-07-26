@@ -114,7 +114,7 @@ public class Main extends RLBotListenerAdapter {
     public static void main(String[] args) throws FileNotFoundException {
         var rlbot = new RLBotInterface();
         rlbot.tryLaunchRLBotServer();
-        rlbot.connect("", ConnectSettings.OUTLIVE_MATCHES);
+        rlbot.connectAsMatchHost();
         rlbot.startMatch(Paths.get("match.toml"));
         rlbot.addListener(new Main());
         rlbot.run();
