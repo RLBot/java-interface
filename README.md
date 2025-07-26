@@ -1,11 +1,10 @@
 # RLBot Java Interface
 
-TODO:
-- [ ] Doc strings
-- [ ] Renderer
-- [ ] DesiredGameStateBuilder
+A library to interface with the [RLBot](https://rlbot.org/) v5 framework through Java.
 
-## Examples
+## Example Usage
+
+For general info about RLBot, see https://wiki.rlbot.org/.
 
 **Running a bot**
 
@@ -18,7 +17,7 @@ import rlbot.protocol.RLBotInterface;
 public class Main {
     public static void main(String[] args) {
         var rlbot = new RLBotInterface();
-        var botManager = new BotManager(rlbot, "rlbot/java/example", ExampleBot::new);
+        var botManager = new BotManager(rlbot, "myname/examplebot/v0.1", ExampleBot::new);
         botManager.run();
     }
 }
@@ -93,6 +92,10 @@ public class ExampleBot implements Bot {
 }
 ```
 
+Remember to create a [`bot.toml`](https://wiki.rlbot.org/v5/botmaking/config-files/#bot-script-config-files) file for you bot.
+
+Use a `HivemindManager` for finer control over hivemind bots.
+
 **Starting a match**
 
 ```java
@@ -113,15 +116,18 @@ public class Main extends RLBotListenerAdapter {
 
     public static void main(String[] args) throws FileNotFoundException {
         var rlbot = new RLBotInterface();
+        // Ensure the rlbot server is running
         rlbot.tryLaunchRLBotServer();
         rlbot.connectAsMatchHost();
+        // Start a match and listen to messages
         rlbot.startMatch(Paths.get("match.toml"));
         rlbot.addListener(new Main());
         rlbot.run();
     }
 
     @Override
-    public void onGamePacketCallback(GamePacketT packet) {
+    public void onGamePacket(GamePacketT packet) {
+        // Process incoming packets here
         if (lastMatchPhase != packet.getMatchInfo().getMatchPhase()) {
             lastMatchPhase = packet.getMatchInfo().getMatchPhase();
             var name = MatchPhase.name(lastMatchPhase);
@@ -130,3 +136,22 @@ public class Main extends RLBotListenerAdapter {
     }
 }
 ```
+
+Remember to define create a [`match.toml`](https://wiki.rlbot.org/v5/botmaking/config-files/#match-config-files) or alternatively construct a `MatchConfigurationT` programmatically and pass that to `rlbot.startMatch(..)`.
+
+## Maintenance
+
+**Setup**
+
+Use `git submodule update --init` to update/initialize the https://github.com/RLBot/flatbuffers-schema submodule.
+
+The flatbuffer classes will be generated automatically when building.
+
+**Testing**
+
+You can use `mvn clean install` to install the interface in your local maven repo.
+This allows you to use it in a different project.
+
+**Deployment**
+
+TODO
