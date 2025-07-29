@@ -1,4 +1,4 @@
-package rlbot.protocol;
+package rlbot.commons.protocol;
 
 import java.nio.file.Path;
 import java.util.Optional;

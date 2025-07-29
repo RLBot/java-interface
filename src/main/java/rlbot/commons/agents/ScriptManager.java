@@ -1,7 +1,7 @@
-package rlbot.agents;
+package rlbot.commons.agents;
 
 import rlbot.flat.MatchCommT;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.protocol.RLBotInterface;
 
 public class ScriptManager extends AgentBaseManager {
 

@@ -1,4 +1,4 @@
-package rlbot.agents;
+package rlbot.commons.agents;
 
 import rlbot.flat.*;
 

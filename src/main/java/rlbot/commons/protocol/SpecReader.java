@@ -1,4 +1,4 @@
-package rlbot.protocol;
+package rlbot.commons.protocol;
 
 import rlbot.flat.CorePacket;
 

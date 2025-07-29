@@ -1,8 +1,8 @@
-package rlbot.agents;
+package rlbot.commons.agents;
 
 import rlbot.flat.FieldInfoT;
 import rlbot.flat.MatchConfigurationT;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.protocol.RLBotInterface;
 
 @FunctionalInterface
 public interface BotFactory {

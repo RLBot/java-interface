@@ -1,6 +1,6 @@
 # RLBot Java Interface
 
-A library to interface with the [RLBot](https://rlbot.org/) v5 framework through Java.
+A library to create Rocket League bots by interfacing with the [RLBot](https://rlbot.org/) v5 framework through Java.
 
 ## Example Usage
 
@@ -9,10 +9,10 @@ For general info about RLBot, see https://wiki.rlbot.org/.
 **Running a bot**
 
 ```java
-package org.rlbot;
+package org.rlbot.commons;
 
-import rlbot.agents.BotManager;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.agents.BotManager;
+import rlbot.commons.protocol.RLBotInterface;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,11 +24,11 @@ public class Main {
 ```
 
 ```java
-package org.rlbot;
+package org.rlbot.commons;
 
-import rlbot.agents.Bot;
+import rlbot.commons.agents.Bot;
 import rlbot.flat.*;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.protocol.RLBotInterface;
 
 public class ExampleBot implements Bot {
 
@@ -104,8 +104,8 @@ package org.rlbot;
 import rlbot.flat.GamePacketT;
 import rlbot.flat.MatchPhase;
 import rlbot.protocol.ConnectSettings;
-import rlbot.protocol.RLBotListenerAdapter;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.protocol.RLBotListenerAdapter;
+import rlbot.commons.protocol.RLBotInterface;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;

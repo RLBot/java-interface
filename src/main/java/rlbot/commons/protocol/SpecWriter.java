@@ -1,4 +1,4 @@
-package rlbot.protocol;
+package rlbot.commons.protocol;
 
 import com.google.flatbuffers.FlatBufferBuilder;
 import rlbot.flat.InterfaceMessageUnion;

@@ -1,10 +1,10 @@
-package rlbot.agents;
+package rlbot.commons.agents;
 
 import rlbot.flat.ControllerStateT;
 import rlbot.flat.MatchCommT;
 import rlbot.flat.PlayerInputT;
 import rlbot.flat.SetLoadoutT;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.protocol.RLBotInterface;
 
 import java.util.Arrays;
 import java.util.List;

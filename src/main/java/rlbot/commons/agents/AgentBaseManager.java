@@ -1,8 +1,8 @@
-package rlbot.agents;
+package rlbot.commons.agents;
 
 import rlbot.flat.*;
-import rlbot.protocol.RLBotListenerAdapter;
-import rlbot.protocol.RLBotInterface;
+import rlbot.commons.protocol.RLBotListenerAdapter;
+import rlbot.commons.protocol.RLBotInterface;
 
 import java.util.logging.Logger;
 
