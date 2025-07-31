@@ -6,7 +6,21 @@ A library to create Rocket League bots by interfacing with the [RLBot](https://r
 
 For general info about RLBot, see https://wiki.rlbot.org/.
 
-**Running a bot**
+To depend on this project, add this to your project's `pom.xml`:
+
+```
+<dependencies>
+    <dependency>
+        <groupId>org.rlbot.commons</groupId>
+        <artifactId>java-interface</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
+Find the newest version [here](https://central.sonatype.com/artifact/org.rlbot.commons/java-interface).
+
+### Running a bot
 
 ```java
 package org.rlbot.commons;
@@ -96,7 +110,7 @@ Remember to create a [`bot.toml`](https://wiki.rlbot.org/v5/botmaking/config-fil
 
 Use a `HivemindManager` for finer control over hivemind bots.
 
-**Starting a match**
+### Starting a match
 
 ```java
 package org.rlbot;
@@ -141,17 +155,34 @@ Remember to define create a [`match.toml`](https://wiki.rlbot.org/v5/botmaking/c
 
 ## Maintenance
 
-**Setup**
+### Setup
 
 Use `git submodule update --init` to update/initialize the https://github.com/RLBot/flatbuffers-schema submodule.
 
 The flatbuffer classes will be generated automatically when building.
 
-**Testing**
+### Testing
 
 You can use `mvn clean install` to install the interface in your local maven repo.
 This allows you to use it in a different project.
 
-**Deployment**
+### Deployment
 
-TODO
+Prerequisites:
+- Have publisher status for the `org.rlbot.commons` namespace at [MavenCentral](https://central.sonatype.com/).
+- Have your generated user token setup in `%UserProfile%/.m2/settings.xml`:
+```xml
+<settings>
+    <servers>
+        <server>
+            <id>central</id>
+            <username>...</username>
+            <password>...</password>
+        </server>
+    </servers>
+</settings>
+```
+
+Steps:
+- Update `<version>` in `pom.xml`. Use postfix `-SNAPSHOT` to upload a beta version.
+- Run `mvn deploy`.

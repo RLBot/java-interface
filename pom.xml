@@ -23,6 +23,7 @@
     <developers>
         <developer>
             <name>Nicolaj Østerby Jensen</name>
+            <email>nicoesterby@gmail.com</email>
             <organization>RLBot</organization>
             <organizationUrl>https://rlbot.org/</organizationUrl>
         </developer>
@@ -50,6 +51,15 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
