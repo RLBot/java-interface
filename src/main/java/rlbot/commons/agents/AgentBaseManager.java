@@ -6,6 +6,18 @@ import rlbot.commons.protocol.RLBotInterface;
 
 import java.util.logging.Logger;
 
+/**
+ * The AgentBaseManager class is an abstract base class for managing agents in RLBot and
+ * implements the common initialization and packet reading behavior. That is, the
+ * AgentBaseManager will wait for the match configuration, field information, and team information
+ * before initializing the agent(s) of this process. Once initialization is complete,
+ * the AgentBaseManager handles messages from RLBot discarding any outdated game packets,
+ * finally passing the latest packet and ball prediction to the implementer.
+ *
+ * @see BotManager
+ * @see HivemindManager
+ * @see ScriptManager
+ */
 public abstract class AgentBaseManager extends RLBotListenerAdapter {
 
     protected final Logger logger = Logger.getLogger(AgentBaseManager.class.getName());
@@ -21,6 +33,13 @@ public abstract class AgentBaseManager extends RLBotListenerAdapter {
     protected GamePacketT latestGamePacket;
     protected BallPredictionT latestBallPrediction;
 
+    /**
+     * AgentBaseManager constructor.
+     *
+     * @param rlbot the RLBotInterface instance used to interact with RLBot functionalities.
+     * @param defaultAgentId the default agent ID to use if the "RLBOT_AGENT_ID" environment variable is not set.
+     * @throws RuntimeException if the agent ID cannot be determined from the environment variable or the provided default.
+     */
     public AgentBaseManager(RLBotInterface rlbot, String defaultAgentId) {
 
         String agentId = System.getenv("RLBOT_AGENT_ID");
@@ -35,6 +54,12 @@ public abstract class AgentBaseManager extends RLBotListenerAdapter {
         rlbot.addListener(this);
     }
 
+    /**
+     * Try to initialize the agents of this manager if the required messages have been received, including
+     * the match configuration, the field information, and the team information.
+     * Once initialization is complete, an {@link InitComplete} is sent to RLBot.
+     *
+     */
     private void tryInitialize() {
         if (initialized || matchConfig == null || fieldInfo == null || teamInfo == null) {
             return;
@@ -53,6 +78,10 @@ public abstract class AgentBaseManager extends RLBotListenerAdapter {
         initialized = true;
     }
 
+    /**
+     * Initialize the agent manager and its agents.
+     * Implementers are expected to send {@link SetLoadout} defining bot(s) initial loadout, if relevant.
+     */
     abstract void initialize();
 
     @Override
@@ -86,10 +115,28 @@ public abstract class AgentBaseManager extends RLBotListenerAdapter {
         tryInitialize();
     }
 
+    /**
+     * Connects to RLBotServer and starts the agent manager's main loop, handling messages.
+     * Once all required info has been received, the agent manager will initialize the
+     * agent(s) of this process. Outdated game packets are discarded, while the latest packet
+     * and ball prediction are continuously passed to the agent(s).
+     * <p>
+     * Use this if both ball prediction and match comms should be sent to this connection.
+     * Use {@link AgentBaseManager#run(boolean, boolean)} otherwise.
+     */
     public void run() {
         run(true, true);
     }
 
+    /**
+     * Connects to RLBotServer and starts the agent manager's main loop, handling messages.
+     * Once all required info has been received, the agent manager will initialize the
+     * agent(s) of this process. Outdated game packets are discarded, while the latest packet
+     * and ball prediction are continuously passed to the agent(s).
+     *
+     * @param wantsBallPrediction whether ball prediction messages should be sent to this agent.
+     * @param wantsComms whether match communication messages should be sent to this agent.
+     */
     public void run(boolean wantsBallPrediction, boolean wantsComms) {
         rlbot.connect(agentId, wantsBallPrediction, wantsComms, false);
 
@@ -117,8 +164,18 @@ public abstract class AgentBaseManager extends RLBotListenerAdapter {
         }
     }
 
+    /**
+     * Invoked when a new game packet is ready to be processed.
+     * See {@link AgentBaseManager#latestGamePacket} and {@link AgentBaseManager#latestBallPrediction}.
+     * Ball prediction may be {@code null} if the user did not request ball prediction messages.
+     * Game packets can also arrive before initialization is complete.
+     */
     protected abstract void processPacket();
 
+    /**
+     * Invoked when the connection is terminating.
+     * Use this to dispose of resources.
+     */
     protected abstract void retire();
 
     public ControllableTeamInfoT getTeamInfo() {

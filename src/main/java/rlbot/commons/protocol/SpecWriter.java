@@ -11,6 +11,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.logging.Logger;
 
+/**
+ * A OutputStream wrapper that follows the RLBot socket protocol.
+ */
 public class SpecWriter {
 
     private static final int USHORT_MAX = 65535;
@@ -24,6 +27,11 @@ public class SpecWriter {
         channel = Channels.newChannel(output);
     }
 
+    /**
+     * Write an {@link InterfaceMessageUnion} message to the output stream.
+     * @param msg the message.
+     * @throws IOException if the output stream cannot be written to.
+     */
     public synchronized void write(InterfaceMessageUnion msg) throws IOException {
         var packet = new InterfacePacketT();
         packet.setMessage(msg);
@@ -32,7 +40,7 @@ public class SpecWriter {
         builder.finish(InterfacePacket.pack(builder, packet));
 
         var bb = builder.dataBuffer();
-        int size = bb.remaining(); // FlatbufferBuilder fills from the back, so remaining == size
+        int size = bb.remaining(); // FlatBufferBuilder fills from the back, so the remaining is message size in bytes
 
         if (size == 0) {
             return;

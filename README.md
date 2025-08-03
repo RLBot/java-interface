@@ -107,6 +107,7 @@ public class ExampleBot implements Bot {
 ```
 
 Remember to create a [`bot.toml`](https://wiki.rlbot.org/v5/botmaking/config-files/#bot-script-config-files) file for you bot.
+It should have the same agent id `"myname/examplebot/v0.1"`.
 
 Use a `HivemindManager` for finer control over hivemind bots.
 
@@ -184,5 +185,5 @@ Prerequisites:
 ```
 
 Steps:
-- Update `<version>` in `pom.xml`. Use postfix `-SNAPSHOT` to upload a beta version.
+- Update `<version>` in `pom.xml`. (Use postfix `-SNAPSHOT` to upload a beta version)
 - Run `mvn deploy`.

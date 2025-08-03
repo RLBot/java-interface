@@ -2,6 +2,15 @@ package rlbot.commons.protocol;
 
 import rlbot.flat.*;
 
+
+/**
+ * RLBotListenerAdapter is an abstract convenience class that provides empty implementations
+ * for all methods defined in the {@link RLBotListener} interface. This allows subclasses
+ * to override only the methods they are interested in, without being required to implement
+ * all the methods of the interface.
+ *
+ * @see RLBotListener
+ */
 public abstract class RLBotListenerAdapter implements RLBotListener {
 
     @Override
