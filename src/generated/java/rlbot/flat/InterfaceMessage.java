@@ -31,7 +31,7 @@ public final class InterfaceMessage {
    */
   public static final byte DesiredGameState = 5;
   /**
-   * Sent by agents to render lines & text in the game.
+   * Sent by agents to render lines and text in the game.
    */
   public static final byte RenderGroup = 6;
   /**

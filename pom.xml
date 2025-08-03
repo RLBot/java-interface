@@ -51,6 +51,7 @@
 
     <build>
         <plugins>
+            <!-- This plugin makes the deploy task deploy to MavenCentral -->
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
@@ -60,6 +61,7 @@
                     <publishingServerId>central</publishingServerId>
                 </configuration>
             </plugin>
+            <!-- This plugin calls the generate-flatbuffer script on build -->
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
@@ -77,6 +79,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- This plugin adds the generate flatbuffer source code to the jar -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -92,6 +95,35 @@
                             <sources>
                                 <source>src/generated/java</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- This plugin ensures source code is included in the distribution -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- This plugin ensures javadoc comments are included in the distribution -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <doclint>all,-missing</doclint>
                         </configuration>
                     </execution>
                 </executions>
