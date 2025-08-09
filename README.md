@@ -12,13 +12,13 @@ To depend on this project, add this to your project's `pom.xml`:
 <dependencies>
     <dependency>
         <groupId>org.rlbot.commons</groupId>
-        <artifactId>java-interface</artifactId>
+        <artifactId>rlbot-framework</artifactId>
         <version>...</version>
     </dependency>
 </dependencies>
 ```
 
-Find the newest version [here](https://central.sonatype.com/artifact/org.rlbot.commons/java-interface).
+Find the newest version [here](https://central.sonatype.com/artifact/org.rlbot.commons/rlbot-framework).
 
 ### Running a bot
 
