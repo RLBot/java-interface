@@ -183,6 +183,7 @@ Prerequisites:
     </servers>
 </settings>
 ```
+- Have a GnuGP installed and a key pair setup. See https://central.sonatype.org/publish/requirements/gpg/
 
 Steps:
 - Update `<version>` in `pom.xml`. (Use postfix `-SNAPSHOT` to upload a beta version)
