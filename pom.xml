@@ -39,6 +39,7 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gpg.skip>true</gpg.skip><!-- by default skip gpg -->
     </properties>
 
     <dependencies>
@@ -132,7 +133,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -146,4 +146,14 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <!-- This profile only runs when building a full release -->
+            <id>release</id>
+            <properties>
+                <!-- Do not skip gpg signing during release -->
+                <gpg.skip>false</gpg.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>
