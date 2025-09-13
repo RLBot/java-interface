@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -42,13 +41,7 @@ public class RLBotInterface implements Runnable {
 
     private final Logger logger = Logger.getLogger(RLBotInterface.class.getName());
 
-    private final Socket socket = new Socket() {{
-        try {
-            setTcpNoDelay(false);
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        }
-    }};
+    private Socket socket;
     private SpecReader in;
     private SpecWriter out;
 
@@ -455,12 +448,18 @@ public class RLBotInterface implements Runnable {
             var packet = in.readOne().unpack();
 
             try {
-                return handleIncomingMsg(packet) ? MsgHandlingResult.MoreMsgsQueued : MsgHandlingResult.Termination;
+                if (handleIncomingMsg(packet)) {
+                    return MsgHandlingResult.MoreMsgsQueued;
+                } else {
+                    disconnectImmediately();
+                    return MsgHandlingResult.Termination;
+                }
             } catch (Exception e) {
                 var typeIndex = packet.getMessage().getType();
                 var typeName = InterfaceMessage.name(typeIndex);
                 logger.severe("Unexpected error while handling message of type " + typeName);
                 e.printStackTrace();
+                disconnectImmediately();
                 return MsgHandlingResult.Termination;
             }
 
@@ -468,6 +467,7 @@ public class RLBotInterface implements Runnable {
             return MsgHandlingResult.NoIncomingMsgs;
         } catch (IOException e) {
             logger.severe("IO error while reading messages from rlbot.");
+            disconnectImmediately();
             throw new RuntimeException(e);
         }
     }
@@ -608,11 +608,15 @@ public class RLBotInterface implements Runnable {
         var nextWarning = 10_000;
         while (System.currentTimeMillis() < beginTime + connectionTimeout * 1000) {
             try {
-                socket.connect(new InetSocketAddress("127.0.0.1", rlbotServerPort));
+                socket = new Socket();
+                socket.setTcpNoDelay(false);
+                socket.setReuseAddress(true);
                 socket.setSoTimeout(0);
+                socket.connect(new InetSocketAddress("127.0.0.1", rlbotServerPort));
                 isConnected = true;
                 break;
             } catch (IOException e) {
+                System.out.println(e.getMessage());
                 try {
                     // Wait a bit before trying again
                     Thread.sleep(100);
@@ -628,6 +632,7 @@ public class RLBotInterface implements Runnable {
         }
 
         if (!isConnected) {
+            socket = null;
             throw new RuntimeException("Failed to establish connection. Ensure that the RLBotServer is running. If you are using the RLBotInterface directly, try calling ensureServerStarted() before connecting.");
         }
 
@@ -657,41 +662,66 @@ public class RLBotInterface implements Runnable {
     }
 
     /**
+     * Closes the socket and stops message handling.
+     * We use this when RLBot tells us to shut down,
+     * or if something went wrong.
+     */
+    private void disconnectImmediately() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+            socket = null;
+            isConnected = false;
+            isRunning = false;
+        } catch (Exception ignored) {
+
+        }
+
+        for (var listener : listeners) {
+            listener.onDisconnect();
+        }
+    }
+
+    /**
      * Disconnect from the RLBotServer.
      */
     public void disconnect() {
         if (!isConnected) {
-            logger.warning("Asked to disconnect but was already disconnected.");
+            logger.fine("Asked to disconnect but was already disconnected.");
             return;
         }
 
-        var msg = new InterfaceMessageUnion();
-        msg.setType(InterfaceMessage.DisconnectSignal);
-        msg.setValue(new DisconnectSignal());
-        sendFlatbufferMsg(msg);
-
-        int timeout = 5_000;
-        while (isRunning && timeout > 0) {
-            try {
-                Thread.sleep(100);
-                timeout -= 100;
-            } catch (InterruptedException ignored) {
-
-            }
-        }
-
-        if (timeout <= 0) {
-            logger.severe("RLBot is not responding to our disconnect request!");
-            isRunning = false;
-        }
-
         try {
-            socket.close();
+            if (!socket.isClosed()) {
+                var msg = new InterfaceMessageUnion();
+                msg.setType(InterfaceMessage.DisconnectSignal);
+                msg.setValue(new DisconnectSignalT());
+                sendFlatbufferMsg(msg);
+
+                int timeout = 5_000;
+                while (isRunning && timeout > 0) {
+                    try {
+                        Thread.sleep(100);
+                        timeout -= 100;
+                    } catch (InterruptedException ignored) {
+
+                    }
+                }
+
+                if (timeout <= 0) {
+                    logger.severe("RLBot is not responding to our disconnect request!");
+                    isRunning = false;
+                }
+
+                socket.close();
+            }
         } catch (IOException ignored) {
 
         }
 
         isConnected = false;
+        socket = null;
 
         for (var listener : listeners) {
             listener.onDisconnect();
