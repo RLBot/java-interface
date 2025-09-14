@@ -229,6 +229,11 @@ public class RLBotInterface implements Runnable {
      * @param matchConfig the {@link MatchConfigurationT}.
      */
     public void startMatch(MatchConfigurationT matchConfig) {
+        if (matchConfig.getLauncherArg() == null) matchConfig.setLauncherArg("");
+        if (matchConfig.getMutators() == null) matchConfig.setMutators(new MutatorSettingsT());
+        if (matchConfig.getPlayerConfigurations() == null) matchConfig.setPlayerConfigurations(new PlayerConfigurationT[0]);
+        if (matchConfig.getScriptConfigurations() == null) matchConfig.setScriptConfigurations(new ScriptConfigurationT[0]);
+
         var msg = new InterfaceMessageUnion();
         msg.setType(InterfaceMessage.MatchConfiguration);
         msg.setValue(matchConfig);
