@@ -28,7 +28,7 @@ public class RLBotServerUtils {
      */
     public static Path defaultInstallDir() {
         // TODO: Support Linux
-        return Path.of(System.getenv("%LOCALAPPDATA%"), "RLBot5", "bin");
+        return Path.of(System.getenv("LOCALAPPDATA"), "RLBot5", "bin");
     }
 
     /**
