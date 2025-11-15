@@ -152,7 +152,7 @@ public class Main extends RLBotListenerAdapter {
 }
 ```
 
-Remember to define create a [`match.toml`](https://wiki.rlbot.org/v5/botmaking/config-files/#match-config-files) or alternatively construct a `MatchConfigurationT` programmatically and pass that to `rlbot.startMatch(..)`.
+Remember to create a [`match.toml`](https://wiki.rlbot.org/v5/botmaking/config-files/#match-config-files) or alternatively construct a `MatchConfigurationT` programmatically and pass that to `rlbot.startMatch(..)`.
 
 ## Maintenance
 
@@ -183,7 +183,7 @@ Prerequisites:
     </servers>
 </settings>
 ```
-- Have a GnuGP installed and a key pair setup. See https://central.sonatype.org/publish/requirements/gpg/
+- Have a GnuGP installed and a key pair setup. See https://www.simplify4u.org/sign-maven-plugin/key-prepare.html
 
 Steps:
 - Update `<version>` in `pom.xml`. (Use postfix `-SNAPSHOT` to upload a beta version)
