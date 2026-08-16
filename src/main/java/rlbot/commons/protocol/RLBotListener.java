@@ -85,4 +85,10 @@ public interface RLBotListener {
      * @param status The received {@link RenderingStatusT} with the new state.
      */
     void onRenderingStatus(RenderingStatusT status);
+
+    /**
+     * Invoked when the RLBotServer response to a {@link PingRequestT}.
+     * @param response The received response.
+     */
+    void onPingResponse(PingResponseT response);
 }

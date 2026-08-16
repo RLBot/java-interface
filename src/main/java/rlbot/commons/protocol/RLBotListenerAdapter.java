@@ -62,4 +62,9 @@ public abstract class RLBotListenerAdapter implements RLBotListener {
     public void onRenderingStatus(RenderingStatusT status) {
 
     }
+
+    @Override
+    public void onPingResponse(PingResponseT response) {
+
+    }
 }

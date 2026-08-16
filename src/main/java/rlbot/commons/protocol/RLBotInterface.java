@@ -254,6 +254,20 @@ public class RLBotInterface implements Runnable {
     }
 
     /**
+     * Send a ping to the RLBotServer identified by the supplied cookie.
+     * Add an RLBotListener to be notified about the response.
+     * @param cookie an identifier
+     */
+    public void sendPingRequest(long cookie) {
+        var req = new PingRequestT();
+        req.setCookie(cookie);
+        var msg = new InterfaceMessageUnion();
+        msg.setType(InterfaceMessage.PingRequest);
+        msg.setValue(req);
+        sendFlatbufferMsg(msg);
+    }
+
+    /**
      * Sends a command to stop the match in the RLBot server, optionally shutting down the RLBot server.
      *
      * @param shutdownRLBot a boolean flag indicating whether to shut down the RLBot server after stopping the match.
@@ -580,6 +594,21 @@ public class RLBotInterface implements Runnable {
                 var status = msg.asRenderingStatus();
                 for (var listener : listeners) {
                     listener.onRenderingStatus(status);
+                }
+                break;
+            case CoreMessage.PingRequest:
+                var cookie =  msg.asPingRequest().getCookie();
+                var res = new PingResponseT();
+                res.setCookie(cookie);
+                var resMsg = new InterfaceMessageUnion();
+                resMsg.setType(CoreMessage.PingResponse);
+                resMsg.setValue(res);
+                sendFlatbufferMsg(resMsg);
+                break;
+            case CoreMessage.PingResponse:
+                var res2 = msg.asPingResponse();
+                for (var listener : listeners) {
+                    listener.onPingResponse(res2);
                 }
                 break;
             default:
