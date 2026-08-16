@@ -23,8 +23,9 @@ public final class MaxScoreMutator {
   public static final int EightyGoals = 12;
   public static final int NinetyGoals = 13;
   public static final int HundredGoals = 14;
+  public static final int OneHundredFiftyOneGoals = 15;
 
-  public static final String[] names = { "Unlimited", "OneGoal", "ThreeGoals", "FiveGoals", "SevenGoals", "TenGoals", "TwentyGoals", "ThirtyGoals", "FortyGoals", "FiftyGoals", "SixtyGoals", "SeventyGoals", "EightyGoals", "NinetyGoals", "HundredGoals", };
+  public static final String[] names = { "Unlimited", "OneGoal", "ThreeGoals", "FiveGoals", "SevenGoals", "TenGoals", "TwentyGoals", "ThirtyGoals", "FortyGoals", "FiftyGoals", "SixtyGoals", "SeventyGoals", "EightyGoals", "NinetyGoals", "HundredGoals", "OneHundredFiftyOneGoals", };
 
   public static String name(int e) { return names[e]; }
 }

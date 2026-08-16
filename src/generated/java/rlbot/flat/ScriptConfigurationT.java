@@ -25,6 +25,7 @@ public class ScriptConfigurationT {
   private String runCommand;
   private int scriptId;
   private String agentId;
+  private rlbot.flat.EnvironmentVariableT[] environment;
 
   public String getName() { return name; }
 
@@ -46,6 +47,10 @@ public class ScriptConfigurationT {
 
   public void setAgentId(String agentId) { this.agentId = agentId; }
 
+  public rlbot.flat.EnvironmentVariableT[] getEnvironment() { return environment; }
+
+  public void setEnvironment(rlbot.flat.EnvironmentVariableT[] environment) { this.environment = environment; }
+
 
   public ScriptConfigurationT() {
     this.name = null;
@@ -53,6 +58,7 @@ public class ScriptConfigurationT {
     this.runCommand = null;
     this.scriptId = 0;
     this.agentId = null;
+    this.environment = null;
   }
 }
 

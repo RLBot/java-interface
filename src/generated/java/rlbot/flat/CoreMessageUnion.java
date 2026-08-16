@@ -29,6 +29,8 @@ public class CoreMessageUnion {
   public rlbot.flat.BallPredictionT asBallPrediction() { return (rlbot.flat.BallPredictionT) value; }
   public rlbot.flat.ControllableTeamInfoT asControllableTeamInfo() { return (rlbot.flat.ControllableTeamInfoT) value; }
   public rlbot.flat.RenderingStatusT asRenderingStatus() { return (rlbot.flat.RenderingStatusT) value; }
+  public rlbot.flat.PingRequestT asPingRequest() { return (rlbot.flat.PingRequestT) value; }
+  public rlbot.flat.PingResponseT asPingResponse() { return (rlbot.flat.PingResponseT) value; }
 
   public static int pack(FlatBufferBuilder builder, CoreMessageUnion _o) {
     switch (_o.type) {
@@ -40,6 +42,8 @@ public class CoreMessageUnion {
       case CoreMessage.BallPrediction: return rlbot.flat.BallPrediction.pack(builder, _o.asBallPrediction());
       case CoreMessage.ControllableTeamInfo: return rlbot.flat.ControllableTeamInfo.pack(builder, _o.asControllableTeamInfo());
       case CoreMessage.RenderingStatus: return rlbot.flat.RenderingStatus.pack(builder, _o.asRenderingStatus());
+      case CoreMessage.PingRequest: return rlbot.flat.PingRequest.pack(builder, _o.asPingRequest());
+      case CoreMessage.PingResponse: return rlbot.flat.PingResponse.pack(builder, _o.asPingResponse());
       default: return 0;
     }
   }

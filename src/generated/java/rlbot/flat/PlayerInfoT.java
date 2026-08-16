@@ -41,6 +41,9 @@ public class PlayerInfoT {
   private boolean hasDodged;
   private float dodgeElapsed;
   private rlbot.flat.Vector2T dodgeDir;
+  private Integer rumbleItem;
+  private float timeUntilNextItem;
+  private float maxTimeUntilNextItem;
 
   public rlbot.flat.PhysicsT getPhysics() { return physics; }
 
@@ -126,6 +129,18 @@ public class PlayerInfoT {
 
   public void setDodgeDir(rlbot.flat.Vector2T dodgeDir) { this.dodgeDir = dodgeDir; }
 
+  public Integer getRumbleItem() { return rumbleItem; }
+
+  public void setRumbleItem(Integer rumbleItem) { this.rumbleItem = rumbleItem; }
+
+  public float getTimeUntilNextItem() { return timeUntilNextItem; }
+
+  public void setTimeUntilNextItem(float timeUntilNextItem) { this.timeUntilNextItem = timeUntilNextItem; }
+
+  public float getMaxTimeUntilNextItem() { return maxTimeUntilNextItem; }
+
+  public void setMaxTimeUntilNextItem(float maxTimeUntilNextItem) { this.maxTimeUntilNextItem = maxTimeUntilNextItem; }
+
 
   public PlayerInfoT() {
     this.physics = new rlbot.flat.PhysicsT();
@@ -149,6 +164,9 @@ public class PlayerInfoT {
     this.hasDodged = false;
     this.dodgeElapsed = 0.0f;
     this.dodgeDir = new rlbot.flat.Vector2T();
+    this.rumbleItem = null;
+    this.timeUntilNextItem = 0.0f;
+    this.maxTimeUntilNextItem = 0.0f;
   }
 }
 

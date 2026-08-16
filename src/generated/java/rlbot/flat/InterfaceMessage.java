@@ -70,8 +70,25 @@ public final class InterfaceMessage {
    * Does nothing if rendering has been completely disabled.
    */
   public static final byte RenderingStatus = 13;
+  /**
+   * Requests for server to send a PingResponse asap for measuring latency
+   */
+  public static final byte PingRequest = 14;
+  /**
+   * Response to PingRequest for measuring latency
+   */
+  public static final byte PingResponse = 15;
+  /**
+   * Sent by sessions to control when the in-game performance monitor will display
+   */
+  public static final byte UpdatePerformanceMonitor = 16;
+  /**
+   * Run an Rocket League or Unreal console command.
+   * See https://wiki.rlbot.org/framework/console-commands/ for a list of known commands.
+   */
+  public static final byte ConsoleCommand = 17;
 
-  public static final String[] names = { "NONE", "DisconnectSignal", "StartCommand", "MatchConfiguration", "PlayerInput", "DesiredGameState", "RenderGroup", "RemoveRenderGroup", "MatchComm", "ConnectionSettings", "StopCommand", "SetLoadout", "InitComplete", "RenderingStatus", };
+  public static final String[] names = { "NONE", "DisconnectSignal", "StartCommand", "MatchConfiguration", "PlayerInput", "DesiredGameState", "RenderGroup", "RemoveRenderGroup", "MatchComm", "ConnectionSettings", "StopCommand", "SetLoadout", "InitComplete", "RenderingStatus", "PingRequest", "PingResponse", "UpdatePerformanceMonitor", "ConsoleCommand", };
 
   public static String name(int e) { return names[e]; }
 }

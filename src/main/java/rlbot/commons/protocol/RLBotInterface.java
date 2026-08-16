@@ -211,6 +211,22 @@ public class RLBotInterface implements Runnable {
     }
 
     /**
+     * Run a Rocket League console command.
+     * Known commands are listed on the
+     * <a href="https://wiki.rlbot.org/v5/framework/console-commands/">rlbot wiki</a>.
+     *
+     * @param command the command
+     */
+    public void sendConsoleCommand(String command) {
+        var cmd = new ConsoleCommandT();
+        cmd.setCommand(command);
+        var msg = new InterfaceMessageUnion();
+        msg.setType(InterfaceMessage.ConsoleCommand);
+        msg.setValue(cmd);
+        sendFlatbufferMsg(msg);
+    }
+
+    /**
      * Sends a {@link RenderGroup} message to render a group of visual elements in the game.
      * The render group may include various debug render messages, such as lines, rectangles, or text,
      * that will be displayed in-game. Reusing a render group id will remove the previous render group

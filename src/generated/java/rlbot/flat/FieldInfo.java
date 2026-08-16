@@ -34,7 +34,7 @@ public final class FieldInfo extends Table {
 
   /**
    * Static information about boost pads on the field.
-   * The dynamic information is found in the GamePacket
+   * The dynamic information is found in the GamePacket.
    * The boost pads are ordered by y-coordinate and then x-coordinate.
    */
   public rlbot.flat.BoostPad boostPads(int j) { return boostPads(new rlbot.flat.BoostPad(), j); }
@@ -50,27 +50,43 @@ public final class FieldInfo extends Table {
   public int goalsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
   public rlbot.flat.GoalInfo.Vector goalsVector() { return goalsVector(new rlbot.flat.GoalInfo.Vector()); }
   public rlbot.flat.GoalInfo.Vector goalsVector(rlbot.flat.GoalInfo.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  /**
+   * Static information about dropshot tiles on the field.
+   * The dynamic information is found in the GamePacket.
+   * The tiles are ordered by y-coordinate and then x-coordinate.
+   */
+  public rlbot.flat.Tile tiles(int j) { return tiles(new rlbot.flat.Tile(), j); }
+  public rlbot.flat.Tile tiles(rlbot.flat.Tile obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int tilesLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
+  public rlbot.flat.Tile.Vector tilesVector() { return tilesVector(new rlbot.flat.Tile.Vector()); }
+  public rlbot.flat.Tile.Vector tilesVector(rlbot.flat.Tile.Vector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createFieldInfo(FlatBufferBuilder builder,
       int boostPadsOffset,
-      int goalsOffset) {
-    builder.startTable(2);
+      int goalsOffset,
+      int tilesOffset) {
+    builder.startTable(3);
+    FieldInfo.addTiles(builder, tilesOffset);
     FieldInfo.addGoals(builder, goalsOffset);
     FieldInfo.addBoostPads(builder, boostPadsOffset);
     return FieldInfo.endFieldInfo(builder);
   }
 
-  public static void startFieldInfo(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void startFieldInfo(FlatBufferBuilder builder) { builder.startTable(3); }
   public static void addBoostPads(FlatBufferBuilder builder, int boostPadsOffset) { builder.addOffset(0, boostPadsOffset, 0); }
   public static int createBoostPadsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startBoostPadsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addGoals(FlatBufferBuilder builder, int goalsOffset) { builder.addOffset(1, goalsOffset, 0); }
   public static int createGoalsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startGoalsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addTiles(FlatBufferBuilder builder, int tilesOffset) { builder.addOffset(2, tilesOffset, 0); }
+  public static int createTilesVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startTilesVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endFieldInfo(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // boost_pads
     builder.required(o, 6);  // goals
+    builder.required(o, 8);  // tiles
     return o;
   }
 
@@ -92,6 +108,9 @@ public final class FieldInfo extends Table {
     rlbot.flat.GoalInfoT[] _oGoals = new rlbot.flat.GoalInfoT[goalsLength()];
     for (int _j = 0; _j < goalsLength(); ++_j) {_oGoals[_j] = (goals(_j) != null ? goals(_j).unpack() : null);}
     _o.setGoals(_oGoals);
+    rlbot.flat.TileT[] _oTiles = new rlbot.flat.TileT[tilesLength()];
+    for (int _j = 0; _j < tilesLength(); ++_j) {_oTiles[_j] = (tiles(_j) != null ? tiles(_j).unpack() : null);}
+    _o.setTiles(_oTiles);
   }
   public static int pack(FlatBufferBuilder builder, FieldInfoT _o) {
     if (_o == null) return 0;
@@ -109,10 +128,18 @@ public final class FieldInfo extends Table {
       for (rlbot.flat.GoalInfoT _e : _o.getGoals()) { __goals[_j] = rlbot.flat.GoalInfo.pack(builder, _e); _j++;}
       _goals = createGoalsVector(builder, __goals);
     }
+    int _tiles = 0;
+    if (_o.getTiles() != null) {
+      int[] __tiles = new int[_o.getTiles().length];
+      int _j = 0;
+      for (rlbot.flat.TileT _e : _o.getTiles()) { __tiles[_j] = rlbot.flat.Tile.pack(builder, _e); _j++;}
+      _tiles = createTilesVector(builder, __tiles);
+    }
     return createFieldInfo(
       builder,
       _boostPads,
-      _goals);
+      _goals,
+      _tiles);
   }
 }
 

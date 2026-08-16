@@ -34,6 +34,10 @@ public class InterfaceMessageUnion {
   public rlbot.flat.SetLoadoutT asSetLoadout() { return (rlbot.flat.SetLoadoutT) value; }
   public rlbot.flat.InitCompleteT asInitComplete() { return (rlbot.flat.InitCompleteT) value; }
   public rlbot.flat.RenderingStatusT asRenderingStatus() { return (rlbot.flat.RenderingStatusT) value; }
+  public rlbot.flat.PingRequestT asPingRequest() { return (rlbot.flat.PingRequestT) value; }
+  public rlbot.flat.PingResponseT asPingResponse() { return (rlbot.flat.PingResponseT) value; }
+  public rlbot.flat.UpdatePerformanceMonitorT asUpdatePerformanceMonitor() { return (rlbot.flat.UpdatePerformanceMonitorT) value; }
+  public rlbot.flat.ConsoleCommandT asConsoleCommand() { return (rlbot.flat.ConsoleCommandT) value; }
 
   public static int pack(FlatBufferBuilder builder, InterfaceMessageUnion _o) {
     switch (_o.type) {
@@ -50,6 +54,10 @@ public class InterfaceMessageUnion {
       case InterfaceMessage.SetLoadout: return rlbot.flat.SetLoadout.pack(builder, _o.asSetLoadout());
       case InterfaceMessage.InitComplete: return rlbot.flat.InitComplete.pack(builder, _o.asInitComplete());
       case InterfaceMessage.RenderingStatus: return rlbot.flat.RenderingStatus.pack(builder, _o.asRenderingStatus());
+      case InterfaceMessage.PingRequest: return rlbot.flat.PingRequest.pack(builder, _o.asPingRequest());
+      case InterfaceMessage.PingResponse: return rlbot.flat.PingResponse.pack(builder, _o.asPingResponse());
+      case InterfaceMessage.UpdatePerformanceMonitor: return rlbot.flat.UpdatePerformanceMonitor.pack(builder, _o.asUpdatePerformanceMonitor());
+      case InterfaceMessage.ConsoleCommand: return rlbot.flat.ConsoleCommand.pack(builder, _o.asConsoleCommand());
       default: return 0;
     }
   }

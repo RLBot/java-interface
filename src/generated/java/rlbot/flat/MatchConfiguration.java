@@ -118,6 +118,10 @@ public final class MatchConfiguration extends Table {
    * This allows the players to use training keybinds, Bakkesmod plugins, and other features that are only allowed in free play.
    */
   public boolean freeplay() { int o = __offset(34); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  /**
+   * Controls when the in-game performance monitor will display.
+   */
+  public int performanceMonitor() { int o = __offset(36); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
 
   public static int createMatchConfiguration(FlatBufferBuilder builder,
       int launcher,
@@ -135,13 +139,15 @@ public final class MatchConfiguration extends Table {
       int enableRendering,
       boolean enableStateSetting,
       boolean autoSaveReplay,
-      boolean freeplay) {
-    builder.startTable(16);
+      boolean freeplay,
+      int performanceMonitor) {
+    builder.startTable(17);
     MatchConfiguration.addMutators(builder, mutatorsOffset);
     MatchConfiguration.addScriptConfigurations(builder, scriptConfigurationsOffset);
     MatchConfiguration.addPlayerConfigurations(builder, playerConfigurationsOffset);
     MatchConfiguration.addGameMapUpk(builder, gameMapUpkOffset);
     MatchConfiguration.addLauncherArg(builder, launcherArgOffset);
+    MatchConfiguration.addPerformanceMonitor(builder, performanceMonitor);
     MatchConfiguration.addFreeplay(builder, freeplay);
     MatchConfiguration.addAutoSaveReplay(builder, autoSaveReplay);
     MatchConfiguration.addEnableStateSetting(builder, enableStateSetting);
@@ -156,7 +162,7 @@ public final class MatchConfiguration extends Table {
     return MatchConfiguration.endMatchConfiguration(builder);
   }
 
-  public static void startMatchConfiguration(FlatBufferBuilder builder) { builder.startTable(16); }
+  public static void startMatchConfiguration(FlatBufferBuilder builder) { builder.startTable(17); }
   public static void addLauncher(FlatBufferBuilder builder, int launcher) { builder.addByte(0, (byte) launcher, (byte) 0); }
   public static void addLauncherArg(FlatBufferBuilder builder, int launcherArgOffset) { builder.addOffset(1, launcherArgOffset, 0); }
   public static void addAutoStartAgents(FlatBufferBuilder builder, boolean autoStartAgents) { builder.addBoolean(2, autoStartAgents, true); }
@@ -177,6 +183,7 @@ public final class MatchConfiguration extends Table {
   public static void addEnableStateSetting(FlatBufferBuilder builder, boolean enableStateSetting) { builder.addBoolean(13, enableStateSetting, true); }
   public static void addAutoSaveReplay(FlatBufferBuilder builder, boolean autoSaveReplay) { builder.addBoolean(14, autoSaveReplay, false); }
   public static void addFreeplay(FlatBufferBuilder builder, boolean freeplay) { builder.addBoolean(15, freeplay, false); }
+  public static void addPerformanceMonitor(FlatBufferBuilder builder, int performanceMonitor) { builder.addByte(16, (byte) performanceMonitor, (byte) 0); }
   public static int endMatchConfiguration(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 6);  // launcher_arg
@@ -232,6 +239,8 @@ public final class MatchConfiguration extends Table {
     _o.setAutoSaveReplay(_oAutoSaveReplay);
     boolean _oFreeplay = freeplay();
     _o.setFreeplay(_oFreeplay);
+    int _oPerformanceMonitor = performanceMonitor();
+    _o.setPerformanceMonitor(_oPerformanceMonitor);
   }
   public static int pack(FlatBufferBuilder builder, MatchConfigurationT _o) {
     if (_o == null) return 0;
@@ -269,7 +278,8 @@ public final class MatchConfiguration extends Table {
       _o.getEnableRendering(),
       _o.getEnableStateSetting(),
       _o.getAutoSaveReplay(),
-      _o.getFreeplay());
+      _o.getFreeplay(),
+      _o.getPerformanceMonitor());
   }
 }
 

@@ -26,6 +26,7 @@ public class CustomBotT {
   private rlbot.flat.PlayerLoadoutT loadout;
   private String agentId;
   private boolean hivemind;
+  private rlbot.flat.EnvironmentVariableT[] environment;
 
   public String getName() { return name; }
 
@@ -51,6 +52,10 @@ public class CustomBotT {
 
   public void setHivemind(boolean hivemind) { this.hivemind = hivemind; }
 
+  public rlbot.flat.EnvironmentVariableT[] getEnvironment() { return environment; }
+
+  public void setEnvironment(rlbot.flat.EnvironmentVariableT[] environment) { this.environment = environment; }
+
 
   public CustomBotT() {
     this.name = null;
@@ -59,6 +64,7 @@ public class CustomBotT {
     this.loadout = null;
     this.agentId = null;
     this.hivemind = false;
+    this.environment = null;
   }
 }
 

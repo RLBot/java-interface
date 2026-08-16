@@ -62,14 +62,24 @@ public final class ScriptConfiguration extends Table {
   public String agentId() { int o = __offset(12); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer agentIdAsByteBuffer() { return __vector_as_bytebuffer(12, 1); }
   public ByteBuffer agentIdInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 12, 1); }
+  /**
+   * User-defined environment variables to pass to the script process.
+   */
+  public rlbot.flat.EnvironmentVariable environment(int j) { return environment(new rlbot.flat.EnvironmentVariable(), j); }
+  public rlbot.flat.EnvironmentVariable environment(rlbot.flat.EnvironmentVariable obj, int j) { int o = __offset(14); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int environmentLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
+  public rlbot.flat.EnvironmentVariable.Vector environmentVector() { return environmentVector(new rlbot.flat.EnvironmentVariable.Vector()); }
+  public rlbot.flat.EnvironmentVariable.Vector environmentVector(rlbot.flat.EnvironmentVariable.Vector obj) { int o = __offset(14); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createScriptConfiguration(FlatBufferBuilder builder,
       int nameOffset,
       int rootDirOffset,
       int runCommandOffset,
       int scriptId,
-      int agentIdOffset) {
-    builder.startTable(5);
+      int agentIdOffset,
+      int environmentOffset) {
+    builder.startTable(6);
+    ScriptConfiguration.addEnvironment(builder, environmentOffset);
     ScriptConfiguration.addAgentId(builder, agentIdOffset);
     ScriptConfiguration.addScriptId(builder, scriptId);
     ScriptConfiguration.addRunCommand(builder, runCommandOffset);
@@ -78,12 +88,15 @@ public final class ScriptConfiguration extends Table {
     return ScriptConfiguration.endScriptConfiguration(builder);
   }
 
-  public static void startScriptConfiguration(FlatBufferBuilder builder) { builder.startTable(5); }
+  public static void startScriptConfiguration(FlatBufferBuilder builder) { builder.startTable(6); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
   public static void addRootDir(FlatBufferBuilder builder, int rootDirOffset) { builder.addOffset(1, rootDirOffset, 0); }
   public static void addRunCommand(FlatBufferBuilder builder, int runCommandOffset) { builder.addOffset(2, runCommandOffset, 0); }
   public static void addScriptId(FlatBufferBuilder builder, int scriptId) { builder.addInt(3, scriptId, 0); }
   public static void addAgentId(FlatBufferBuilder builder, int agentIdOffset) { builder.addOffset(4, agentIdOffset, 0); }
+  public static void addEnvironment(FlatBufferBuilder builder, int environmentOffset) { builder.addOffset(5, environmentOffset, 0); }
+  public static int createEnvironmentVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startEnvironmentVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endScriptConfiguration(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // name
@@ -115,6 +128,9 @@ public final class ScriptConfiguration extends Table {
     _o.setScriptId(_oScriptId);
     String _oAgentId = agentId();
     _o.setAgentId(_oAgentId);
+    rlbot.flat.EnvironmentVariableT[] _oEnvironment = new rlbot.flat.EnvironmentVariableT[environmentLength()];
+    for (int _j = 0; _j < environmentLength(); ++_j) {_oEnvironment[_j] = (environment(_j) != null ? environment(_j).unpack() : null);}
+    _o.setEnvironment(_oEnvironment);
   }
   public static int pack(FlatBufferBuilder builder, ScriptConfigurationT _o) {
     if (_o == null) return 0;
@@ -122,13 +138,21 @@ public final class ScriptConfiguration extends Table {
     int _rootDir = _o.getRootDir() == null ? 0 : builder.createString(_o.getRootDir());
     int _runCommand = _o.getRunCommand() == null ? 0 : builder.createString(_o.getRunCommand());
     int _agentId = _o.getAgentId() == null ? 0 : builder.createString(_o.getAgentId());
+    int _environment = 0;
+    if (_o.getEnvironment() != null) {
+      int[] __environment = new int[_o.getEnvironment().length];
+      int _j = 0;
+      for (rlbot.flat.EnvironmentVariableT _e : _o.getEnvironment()) { __environment[_j] = rlbot.flat.EnvironmentVariable.pack(builder, _e); _j++;}
+      _environment = createEnvironmentVector(builder, __environment);
+    }
     return createScriptConfiguration(
       builder,
       _name,
       _rootDir,
       _runCommand,
       _o.getScriptId(),
-      _agentId);
+      _agentId,
+      _environment);
   }
 }
 

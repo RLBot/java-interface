@@ -35,7 +35,6 @@ public class DesiredGameStateBuilder {
         this.state = new DesiredGameStateT();
         state.setBallStates(new DesiredBallStateT[0]);
         state.setCarStates(new DesiredCarStateT[0]);
-        state.setConsoleCommands(new ConsoleCommandT[0]);
     }
 
     /**

@@ -42,8 +42,16 @@ public final class CoreMessage {
    * An agent had its ability to render changed
    */
   public static final byte RenderingStatus = 8;
+  /**
+   * Requests for client to send a PingResponse asap for measuring latency
+   */
+  public static final byte PingRequest = 9;
+  /**
+   * Response to PingRequest for measuring latency
+   */
+  public static final byte PingResponse = 10;
 
-  public static final String[] names = { "NONE", "DisconnectSignal", "GamePacket", "FieldInfo", "MatchConfiguration", "MatchComm", "BallPrediction", "ControllableTeamInfo", "RenderingStatus", };
+  public static final String[] names = { "NONE", "DisconnectSignal", "GamePacket", "FieldInfo", "MatchConfiguration", "MatchComm", "BallPrediction", "ControllableTeamInfo", "RenderingStatus", "PingRequest", "PingResponse", };
 
   public static String name(int e) { return names[e]; }
 }

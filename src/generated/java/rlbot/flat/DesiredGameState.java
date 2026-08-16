@@ -53,23 +53,12 @@ public final class DesiredGameState extends Table {
    */
   public rlbot.flat.DesiredMatchInfo matchInfo() { return matchInfo(new rlbot.flat.DesiredMatchInfo()); }
   public rlbot.flat.DesiredMatchInfo matchInfo(rlbot.flat.DesiredMatchInfo obj) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
-  /**
-   * A list of console commands to execute.
-   * See https://wiki.rlbot.org/framework/console-commands/ for a list of known commands.
-   */
-  public rlbot.flat.ConsoleCommand consoleCommands(int j) { return consoleCommands(new rlbot.flat.ConsoleCommand(), j); }
-  public rlbot.flat.ConsoleCommand consoleCommands(rlbot.flat.ConsoleCommand obj, int j) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-  public int consoleCommandsLength() { int o = __offset(10); return o != 0 ? __vector_len(o) : 0; }
-  public rlbot.flat.ConsoleCommand.Vector consoleCommandsVector() { return consoleCommandsVector(new rlbot.flat.ConsoleCommand.Vector()); }
-  public rlbot.flat.ConsoleCommand.Vector consoleCommandsVector(rlbot.flat.ConsoleCommand.Vector obj) { int o = __offset(10); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createDesiredGameState(FlatBufferBuilder builder,
       int ballStatesOffset,
       int carStatesOffset,
-      int matchInfoOffset,
-      int consoleCommandsOffset) {
+      int matchInfoOffset) {
     builder.startTable(4);
-    DesiredGameState.addConsoleCommands(builder, consoleCommandsOffset);
     DesiredGameState.addMatchInfo(builder, matchInfoOffset);
     DesiredGameState.addCarStates(builder, carStatesOffset);
     DesiredGameState.addBallStates(builder, ballStatesOffset);
@@ -84,14 +73,10 @@ public final class DesiredGameState extends Table {
   public static int createCarStatesVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startCarStatesVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addMatchInfo(FlatBufferBuilder builder, int matchInfoOffset) { builder.addOffset(2, matchInfoOffset, 0); }
-  public static void addConsoleCommands(FlatBufferBuilder builder, int consoleCommandsOffset) { builder.addOffset(3, consoleCommandsOffset, 0); }
-  public static int createConsoleCommandsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
-  public static void startConsoleCommandsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endDesiredGameState(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // ball_states
     builder.required(o, 6);  // car_states
-    builder.required(o, 10);  // console_commands
     return o;
   }
 
@@ -115,9 +100,6 @@ public final class DesiredGameState extends Table {
     _o.setCarStates(_oCarStates);
     if (matchInfo() != null) _o.setMatchInfo(matchInfo().unpack());
     else _o.setMatchInfo(null);
-    rlbot.flat.ConsoleCommandT[] _oConsoleCommands = new rlbot.flat.ConsoleCommandT[consoleCommandsLength()];
-    for (int _j = 0; _j < consoleCommandsLength(); ++_j) {_oConsoleCommands[_j] = (consoleCommands(_j) != null ? consoleCommands(_j).unpack() : null);}
-    _o.setConsoleCommands(_oConsoleCommands);
   }
   public static int pack(FlatBufferBuilder builder, DesiredGameStateT _o) {
     if (_o == null) return 0;
@@ -136,19 +118,11 @@ public final class DesiredGameState extends Table {
       _carStates = createCarStatesVector(builder, __carStates);
     }
     int _matchInfo = _o.getMatchInfo() == null ? 0 : rlbot.flat.DesiredMatchInfo.pack(builder, _o.getMatchInfo());
-    int _consoleCommands = 0;
-    if (_o.getConsoleCommands() != null) {
-      int[] __consoleCommands = new int[_o.getConsoleCommands().length];
-      int _j = 0;
-      for (rlbot.flat.ConsoleCommandT _e : _o.getConsoleCommands()) { __consoleCommands[_j] = rlbot.flat.ConsoleCommand.pack(builder, _e); _j++;}
-      _consoleCommands = createConsoleCommandsVector(builder, __consoleCommands);
-    }
     return createDesiredGameState(
       builder,
       _ballStates,
       _carStates,
-      _matchInfo,
-      _consoleCommands);
+      _matchInfo);
   }
 }
 

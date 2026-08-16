@@ -23,8 +23,10 @@ public final class BallTypeMutator {
   public static final int ScoreAbsorb = 12;
   public static final int Shoe = 13;
   public static final int PizzaPuck = 14;
+  public static final int Strike = 15;
+  public static final int SpookyBalloon = 16;
 
-  public static final String[] names = { "Default", "Cube", "Puck", "Basketball", "Beachball", "Anniversary", "Haunted", "Ekin", "SpookyCube", "Egg", "PlayerSeeking", "Dropshot", "ScoreAbsorb", "Shoe", "PizzaPuck", };
+  public static final String[] names = { "Default", "Cube", "Puck", "Basketball", "Beachball", "Anniversary", "Haunted", "Ekin", "SpookyCube", "Egg", "PlayerSeeking", "Dropshot", "ScoreAbsorb", "Shoe", "PizzaPuck", "Strike", "SpookyBalloon", };
 
   public static String name(int e) { return names[e]; }
 }

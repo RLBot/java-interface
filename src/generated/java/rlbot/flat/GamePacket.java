@@ -71,14 +71,25 @@ public final class GamePacket extends Table {
   public int teamsLength() { int o = __offset(12); return o != 0 ? __vector_len(o) : 0; }
   public rlbot.flat.TeamInfo.Vector teamsVector() { return teamsVector(new rlbot.flat.TeamInfo.Vector()); }
   public rlbot.flat.TeamInfo.Vector teamsVector(rlbot.flat.TeamInfo.Vector obj) { int o = __offset(12); return o != 0 ? obj.__assign(__vector(o), 8, bb) : null; }
+  /**
+   * The state of the dropshot tiles. The tiles are sorted by y-coordinate and then x-coordinate.
+   */
+  public int tiles(int j) { int o = __offset(14); return o != 0 ? bb.get(__vector(o) + j * 1) & 0xFF : 0; }
+  public int tilesLength() { int o = __offset(14); return o != 0 ? __vector_len(o) : 0; }
+  public ByteVector tilesVector() { return tilesVector(new ByteVector()); }
+  public ByteVector tilesVector(ByteVector obj) { int o = __offset(14); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
+  public ByteBuffer tilesAsByteBuffer() { return __vector_as_bytebuffer(14, 1); }
+  public ByteBuffer tilesInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 14, 1); }
 
   public static int createGamePacket(FlatBufferBuilder builder,
       int playersOffset,
       int boostPadsOffset,
       int ballsOffset,
       int matchInfoOffset,
-      int teamsOffset) {
-    builder.startTable(5);
+      int teamsOffset,
+      int tilesOffset) {
+    builder.startTable(6);
+    GamePacket.addTiles(builder, tilesOffset);
     GamePacket.addTeams(builder, teamsOffset);
     GamePacket.addMatchInfo(builder, matchInfoOffset);
     GamePacket.addBalls(builder, ballsOffset);
@@ -87,7 +98,7 @@ public final class GamePacket extends Table {
     return GamePacket.endGamePacket(builder);
   }
 
-  public static void startGamePacket(FlatBufferBuilder builder) { builder.startTable(5); }
+  public static void startGamePacket(FlatBufferBuilder builder) { builder.startTable(6); }
   public static void addPlayers(FlatBufferBuilder builder, int playersOffset) { builder.addOffset(0, playersOffset, 0); }
   public static int createPlayersVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startPlayersVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
@@ -99,6 +110,10 @@ public final class GamePacket extends Table {
   public static void addMatchInfo(FlatBufferBuilder builder, int matchInfoOffset) { builder.addOffset(3, matchInfoOffset, 0); }
   public static void addTeams(FlatBufferBuilder builder, int teamsOffset) { builder.addOffset(4, teamsOffset, 0); }
   public static void startTeamsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(8, numElems, 4); }
+  public static void addTiles(FlatBufferBuilder builder, int tilesOffset) { builder.addOffset(5, tilesOffset, 0); }
+  public static int createTilesVector(FlatBufferBuilder builder, byte[] data) { return builder.createByteVector(data); }
+  public static int createTilesVector(FlatBufferBuilder builder, ByteBuffer data) { return builder.createByteVector(data); }
+  public static void startTilesVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
   public static int endGamePacket(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // players
@@ -106,6 +121,7 @@ public final class GamePacket extends Table {
     builder.required(o, 8);  // balls
     builder.required(o, 10);  // match_info
     builder.required(o, 12);  // teams
+    builder.required(o, 14);  // tiles
     return o;
   }
 
@@ -135,6 +151,9 @@ public final class GamePacket extends Table {
     rlbot.flat.TeamInfoT[] _oTeams = new rlbot.flat.TeamInfoT[teamsLength()];
     for (int _j = 0; _j < teamsLength(); ++_j) {_oTeams[_j] = (teams(_j) != null ? teams(_j).unpack() : null);}
     _o.setTeams(_oTeams);
+    int[] _oTiles = new int[tilesLength()];
+    for (int _j = 0; _j < tilesLength(); ++_j) {_oTiles[_j] = tiles(_j);}
+    _o.setTiles(_oTiles);
   }
   public static int pack(FlatBufferBuilder builder, GamePacketT _o) {
     if (_o == null) return 0;
@@ -169,13 +188,21 @@ public final class GamePacket extends Table {
       for (int _j = _oTeams.length - 1; _j >=0; _j--) { _unused_offset = rlbot.flat.TeamInfo.pack(builder, _oTeams[_j]);}
       _teams = builder.endVector();
     }
+    int _tiles = 0;
+    if (_o.getTiles() != null) {
+      byte[] __tiles = new byte[_o.getTiles().length];
+      int _j = 0;
+      for (int _e : _o.getTiles()) { __tiles[_j] = (byte) _e; _j++;}
+      _tiles = createTilesVector(builder, __tiles);
+    }
     return createGamePacket(
       builder,
       _players,
       _boostPads,
       _balls,
       _matchInfo,
-      _teams);
+      _teams,
+      _tiles);
   }
 }
 

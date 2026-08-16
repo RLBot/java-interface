@@ -9,9 +9,23 @@ package rlbot.flat;
 public final class MaxTimeMutator {
   private MaxTimeMutator() { }
   public static final int Unlimited = 0;
-  public static final int ElevenMinutes = 1;
+  public static final int OneMinute = 1;
+  public static final int TwoMinutes = 2;
+  public static final int ThreeMinutes = 3;
+  public static final int FourMinutes = 4;
+  public static final int FiveMinutes = 5;
+  public static final int SixMinutes = 6;
+  public static final int SevenMinutes = 7;
+  public static final int EightMinutes = 8;
+  public static final int NineMinutes = 9;
+  public static final int TenMinutes = 10;
+  public static final int ElevenMinutes = 11;
+  public static final int TwelveMinutes = 12;
+  public static final int ThirteenMinutes = 13;
+  public static final int FourteenMinutes = 14;
+  public static final int FifteenMinutes = 15;
 
-  public static final String[] names = { "Unlimited", "ElevenMinutes", };
+  public static final String[] names = { "Unlimited", "OneMinute", "TwoMinutes", "ThreeMinutes", "FourMinutes", "FiveMinutes", "SixMinutes", "SevenMinutes", "EightMinutes", "NineMinutes", "TenMinutes", "ElevenMinutes", "TwelveMinutes", "ThirteenMinutes", "FourteenMinutes", "FifteenMinutes", };
 
   public static String name(int e) { return names[e]; }
 }

@@ -22,6 +22,7 @@ import java.nio.ByteOrder;
 public class FieldInfoT {
   private rlbot.flat.BoostPadT[] boostPads;
   private rlbot.flat.GoalInfoT[] goals;
+  private rlbot.flat.TileT[] tiles;
 
   public rlbot.flat.BoostPadT[] getBoostPads() { return boostPads; }
 
@@ -31,10 +32,15 @@ public class FieldInfoT {
 
   public void setGoals(rlbot.flat.GoalInfoT[] goals) { this.goals = goals; }
 
+  public rlbot.flat.TileT[] getTiles() { return tiles; }
+
+  public void setTiles(rlbot.flat.TileT[] tiles) { this.tiles = tiles; }
+
 
   public FieldInfoT() {
     this.boostPads = null;
     this.goals = null;
+    this.tiles = null;
   }
 }
 

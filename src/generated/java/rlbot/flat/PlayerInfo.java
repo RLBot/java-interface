@@ -67,6 +67,9 @@ public final class PlayerInfo extends Table {
    * The value is -1 while on ground or when airborne for too long after jumping.
    * A dodge/double jump is possible for 1.25 seconds after the first jump plus
    * up to an additional 0.2 seconds depending how long the jump button was pressed for the first jump.
+   * Note that falling off a surface instead of jumping, does not activate the dodge timeout, and making a dodge/double jump possible indefinitely.
+   * This is commonly known as a flip reset.
+   * The car is holding a flip reset if `air_state == InAir && !has_jumped && !has_double_jumped && !has_dodged`.
    */
   public float dodgeTimeout() { int o = __offset(16); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
@@ -127,15 +130,19 @@ public final class PlayerInfo extends Table {
   public rlbot.flat.ControllerState lastInput() { return lastInput(new rlbot.flat.ControllerState()); }
   public rlbot.flat.ControllerState lastInput(rlbot.flat.ControllerState obj) { int o = __offset(34); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
   /**
-   * True if the player has jumped. See dodge_timeout to know if a dodge/secondary jump is available.
+   * True if the player has jumped into the air.
+   * See dodge_timeout to know if a dodge/double jump is temporarily available.
+   * Note that falling off a surface instead of jumping, does not activate the dodge timeout, and making a dodge/double jump possible indefinitely.
+   * This is commonly known as a flip reset.
+   * The car is holding a flip reset if `air_state == InAir && !has_jumped && !has_double_jumped && !has_dodged`.
    */
   public boolean hasJumped() { int o = __offset(36); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
   /**
-   * True if the player has doubled jumped.
+   * True if the player has doubled jumped since it left the ground. False while on the ground.
    */
   public boolean hasDoubleJumped() { int o = __offset(38); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
   /**
-   * True if the player has dodged.
+   * True if the player has dodged since it left the ground. False while the ground.
    */
   public boolean hasDodged() { int o = __offset(40); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
   /**
@@ -149,8 +156,22 @@ public final class PlayerInfo extends Table {
    */
   public rlbot.flat.Vector2 dodgeDir() { return dodgeDir(new rlbot.flat.Vector2()); }
   public rlbot.flat.Vector2 dodgeDir(rlbot.flat.Vector2 obj) { int o = __offset(44); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  /**
+   * Which item the player has, if any
+   */
+  public boolean hasRumbleItem() { return 0 != __offset(46); }
+  public int rumbleItem() { int o = __offset(46); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * If `rumble_item` is null, this is a countdown until the next item is recieved.
+   * Otherwise, this field equals 0.
+   */
+  public float timeUntilNextItem() { int o = __offset(48); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
+  /**
+   * The initial value of `time_until_next_item`.
+   */
+  public float maxTimeUntilNextItem() { int o = __offset(50); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
 
-  public static void startPlayerInfo(FlatBufferBuilder builder) { builder.startTable(21); }
+  public static void startPlayerInfo(FlatBufferBuilder builder) { builder.startTable(24); }
   public static void addPhysics(FlatBufferBuilder builder, int physicsOffset) { builder.addStruct(0, physicsOffset, 0); }
   public static void addScoreInfo(FlatBufferBuilder builder, int scoreInfoOffset) { builder.addStruct(1, scoreInfoOffset, 0); }
   public static void addHitbox(FlatBufferBuilder builder, int hitboxOffset) { builder.addOffset(2, hitboxOffset, 0); }
@@ -174,6 +195,9 @@ public final class PlayerInfo extends Table {
   public static void addHasDodged(FlatBufferBuilder builder, boolean hasDodged) { builder.addBoolean(18, hasDodged, false); }
   public static void addDodgeElapsed(FlatBufferBuilder builder, float dodgeElapsed) { builder.addFloat(19, dodgeElapsed, 0.0f); }
   public static void addDodgeDir(FlatBufferBuilder builder, int dodgeDirOffset) { builder.addStruct(20, dodgeDirOffset, 0); }
+  public static void addRumbleItem(FlatBufferBuilder builder, int rumbleItem) { builder.addByte(21, (byte) rumbleItem, (byte) 0); }
+  public static void addTimeUntilNextItem(FlatBufferBuilder builder, float timeUntilNextItem) { builder.addFloat(22, timeUntilNextItem, 0.0f); }
+  public static void addMaxTimeUntilNextItem(FlatBufferBuilder builder, float maxTimeUntilNextItem) { builder.addFloat(23, maxTimeUntilNextItem, 0.0f); }
   public static int endPlayerInfo(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // physics
@@ -242,6 +266,12 @@ public final class PlayerInfo extends Table {
     _o.setDodgeElapsed(_oDodgeElapsed);
     if (dodgeDir() != null) dodgeDir().unpackTo(_o.getDodgeDir());
     else _o.setDodgeDir(null);
+    Integer _oRumbleItem = hasRumbleItem() ? rumbleItem() : null;
+    _o.setRumbleItem(_oRumbleItem);
+    float _oTimeUntilNextItem = timeUntilNextItem();
+    _o.setTimeUntilNextItem(_oTimeUntilNextItem);
+    float _oMaxTimeUntilNextItem = maxTimeUntilNextItem();
+    _o.setMaxTimeUntilNextItem(_oMaxTimeUntilNextItem);
   }
   public static int pack(FlatBufferBuilder builder, PlayerInfoT _o) {
     if (_o == null) return 0;
@@ -277,6 +307,9 @@ public final class PlayerInfo extends Table {
     addHasDodged(builder, _o.getHasDodged());
     addDodgeElapsed(builder, _o.getDodgeElapsed());
     addDodgeDir(builder, rlbot.flat.Vector2.pack(builder, _o.getDodgeDir()));
+    if (_o.getRumbleItem() != null) { addRumbleItem(builder, _o.getRumbleItem()); }
+    addTimeUntilNextItem(builder, _o.getTimeUntilNextItem());
+    addMaxTimeUntilNextItem(builder, _o.getMaxTimeUntilNextItem());
     return endPlayerInfo(builder);
   }
 }

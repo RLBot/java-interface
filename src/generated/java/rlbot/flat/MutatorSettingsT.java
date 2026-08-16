@@ -52,6 +52,12 @@ public class MutatorSettingsT {
   private int assistGoalScore;
   private int inputRestriction;
   private int scoringRule;
+  private int triTipMode;
+  private int lockedDamagePhase;
+  private int spawnDemoball;
+  private int boostRestriction;
+  private int keepUpRules;
+  private int matchAdmin;
 
   public int getMatchLength() { return matchLength; }
 
@@ -181,6 +187,30 @@ public class MutatorSettingsT {
 
   public void setScoringRule(int scoringRule) { this.scoringRule = scoringRule; }
 
+  public int getTriTipMode() { return triTipMode; }
+
+  public void setTriTipMode(int triTipMode) { this.triTipMode = triTipMode; }
+
+  public int getLockedDamagePhase() { return lockedDamagePhase; }
+
+  public void setLockedDamagePhase(int lockedDamagePhase) { this.lockedDamagePhase = lockedDamagePhase; }
+
+  public int getSpawnDemoball() { return spawnDemoball; }
+
+  public void setSpawnDemoball(int spawnDemoball) { this.spawnDemoball = spawnDemoball; }
+
+  public int getBoostRestriction() { return boostRestriction; }
+
+  public void setBoostRestriction(int boostRestriction) { this.boostRestriction = boostRestriction; }
+
+  public int getKeepUpRules() { return keepUpRules; }
+
+  public void setKeepUpRules(int keepUpRules) { this.keepUpRules = keepUpRules; }
+
+  public int getMatchAdmin() { return matchAdmin; }
+
+  public void setMatchAdmin(int matchAdmin) { this.matchAdmin = matchAdmin; }
+
 
   public MutatorSettingsT() {
     this.matchLength = 0;
@@ -215,6 +245,12 @@ public class MutatorSettingsT {
     this.assistGoalScore = 0;
     this.inputRestriction = 0;
     this.scoringRule = 0;
+    this.triTipMode = 0;
+    this.lockedDamagePhase = 0;
+    this.spawnDemoball = 0;
+    this.boostRestriction = 0;
+    this.keepUpRules = 0;
+    this.matchAdmin = 0;
   }
 }
 

@@ -36,6 +36,7 @@ public class MatchConfigurationT {
   private boolean enableStateSetting;
   private boolean autoSaveReplay;
   private boolean freeplay;
+  private int performanceMonitor;
 
   public int getLauncher() { return launcher; }
 
@@ -101,6 +102,10 @@ public class MatchConfigurationT {
 
   public void setFreeplay(boolean freeplay) { this.freeplay = freeplay; }
 
+  public int getPerformanceMonitor() { return performanceMonitor; }
+
+  public void setPerformanceMonitor(int performanceMonitor) { this.performanceMonitor = performanceMonitor; }
+
 
   public MatchConfigurationT() {
     this.launcher = 0;
@@ -119,6 +124,7 @@ public class MatchConfigurationT {
     this.enableStateSetting = true;
     this.autoSaveReplay = false;
     this.freeplay = false;
+    this.performanceMonitor = 0;
   }
 }
 

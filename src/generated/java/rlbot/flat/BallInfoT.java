@@ -22,6 +22,8 @@ import java.nio.ByteOrder;
 public class BallInfoT {
   private rlbot.flat.PhysicsT physics;
   private rlbot.flat.CollisionShapeUnion shape;
+  private int chargeLevel;
+  private float targetSpeed;
 
   public rlbot.flat.PhysicsT getPhysics() { return physics; }
 
@@ -31,10 +33,20 @@ public class BallInfoT {
 
   public void setShape(rlbot.flat.CollisionShapeUnion shape) { this.shape = shape; }
 
+  public int getChargeLevel() { return chargeLevel; }
+
+  public void setChargeLevel(int chargeLevel) { this.chargeLevel = chargeLevel; }
+
+  public float getTargetSpeed() { return targetSpeed; }
+
+  public void setTargetSpeed(float targetSpeed) { this.targetSpeed = targetSpeed; }
+
 
   public BallInfoT() {
     this.physics = new rlbot.flat.PhysicsT();
     this.shape = null;
+    this.chargeLevel = 0;
+    this.targetSpeed = 0.0f;
   }
 }
 

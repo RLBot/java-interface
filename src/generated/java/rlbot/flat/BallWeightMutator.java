@@ -16,8 +16,9 @@ public final class BallWeightMutator {
   public static final int BeachBallCurve = 5;
   public static final int MagnusFutBall = 6;
   public static final int MagnusFutballLess = 7;
+  public static final int Balloon = 8;
 
-  public static final String[] names = { "Default", "Light", "Heavy", "SuperLight", "CurveBall", "BeachBallCurve", "MagnusFutBall", "MagnusFutballLess", };
+  public static final String[] names = { "Default", "Light", "Heavy", "SuperLight", "CurveBall", "BeachBallCurve", "MagnusFutBall", "MagnusFutballLess", "Balloon", };
 
   public static String name(int e) { return names[e]; }
 }

@@ -40,11 +40,26 @@ public final class BallInfo extends Table {
    * The collision shape of the ball.
    */
   public Table shape(Table obj) { int o = __offset(8); return o != 0 ? __union(obj, o + bb_pos) : null; }
+  /**
+   * The charge level, if it is a dropshot ball.
+   * -1 = Not dropshot
+   * 0 = No charge
+   * 1 = Charged
+   * 2 = Supercharged
+   */
+  public int chargeLevel() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  /**
+   * The target homing speed, if it is a heatseeker ball.
+   * If it is not a heatseeker ball, this is always 0.
+   */
+  public float targetSpeed() { int o = __offset(12); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
 
-  public static void startBallInfo(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startBallInfo(FlatBufferBuilder builder) { builder.startTable(5); }
   public static void addPhysics(FlatBufferBuilder builder, int physicsOffset) { builder.addStruct(0, physicsOffset, 0); }
   public static void addShapeType(FlatBufferBuilder builder, byte shapeType) { builder.addByte(1, shapeType, 0); }
   public static void addShape(FlatBufferBuilder builder, int shapeOffset) { builder.addOffset(2, shapeOffset, 0); }
+  public static void addChargeLevel(FlatBufferBuilder builder, int chargeLevel) { builder.addInt(3, chargeLevel, 0); }
+  public static void addTargetSpeed(FlatBufferBuilder builder, float targetSpeed) { builder.addFloat(4, targetSpeed, 0.0f); }
   public static int endBallInfo(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // physics
@@ -86,6 +101,10 @@ public final class BallInfo extends Table {
       default: break;
     }
     _o.setShape(_oShape);
+    int _oChargeLevel = chargeLevel();
+    _o.setChargeLevel(_oChargeLevel);
+    float _oTargetSpeed = targetSpeed();
+    _o.setTargetSpeed(_oTargetSpeed);
   }
   public static int pack(FlatBufferBuilder builder, BallInfoT _o) {
     if (_o == null) return 0;
@@ -95,6 +114,8 @@ public final class BallInfo extends Table {
     addPhysics(builder, rlbot.flat.Physics.pack(builder, _o.getPhysics()));
     addShapeType(builder, _shapeType);
     addShape(builder, _shape);
+    addChargeLevel(builder, _o.getChargeLevel());
+    addTargetSpeed(builder, _o.getTargetSpeed());
     return endBallInfo(builder);
   }
 }

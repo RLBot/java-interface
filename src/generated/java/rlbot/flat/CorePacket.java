@@ -100,6 +100,14 @@ public final class CorePacket extends Table {
         _oMessageValue = message(new rlbot.flat.RenderingStatus());
         _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.RenderingStatus) _oMessageValue).unpack() : null);
         break;
+      case rlbot.flat.CoreMessage.PingRequest:
+        _oMessageValue = message(new rlbot.flat.PingRequest());
+        _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.PingRequest) _oMessageValue).unpack() : null);
+        break;
+      case rlbot.flat.CoreMessage.PingResponse:
+        _oMessageValue = message(new rlbot.flat.PingResponse());
+        _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.PingResponse) _oMessageValue).unpack() : null);
+        break;
       default: break;
     }
     _o.setMessage(_oMessage);

@@ -159,6 +159,30 @@ public final class MutatorSettings extends Table {
    * Additional rules about scoring (ball-goal interaction).
    */
   public int scoringRule() { int o = __offset(66); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * Tri tip car mode.
+   */
+  public int triTipMode() { int o = __offset(68); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * Locked damage phase mode.
+   */
+  public int lockedDamagePhase() { int o = __offset(70); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * Spawn demoball.
+   */
+  public int spawnDemoball() { int o = __offset(72); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * Boost restriction.
+   */
+  public int boostRestriction() { int o = __offset(74); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * Keep up rules.
+   */
+  public int keepUpRules() { int o = __offset(76); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
+  /**
+   * Match admin.
+   */
+  public int matchAdmin() { int o = __offset(78); return o != 0 ? bb.get(o + bb_pos) & 0xFF : 0; }
 
   public static int createMutatorSettings(FlatBufferBuilder builder,
       int matchLength,
@@ -192,8 +216,20 @@ public final class MutatorSettings extends Table {
       int aerialGoalScore,
       int assistGoalScore,
       int inputRestriction,
-      int scoringRule) {
-    builder.startTable(32);
+      int scoringRule,
+      int triTipMode,
+      int lockedDamagePhase,
+      int spawnDemoball,
+      int boostRestriction,
+      int keepUpRules,
+      int matchAdmin) {
+    builder.startTable(38);
+    MutatorSettings.addMatchAdmin(builder, matchAdmin);
+    MutatorSettings.addKeepUpRules(builder, keepUpRules);
+    MutatorSettings.addBoostRestriction(builder, boostRestriction);
+    MutatorSettings.addSpawnDemoball(builder, spawnDemoball);
+    MutatorSettings.addLockedDamagePhase(builder, lockedDamagePhase);
+    MutatorSettings.addTriTipMode(builder, triTipMode);
     MutatorSettings.addScoringRule(builder, scoringRule);
     MutatorSettings.addInputRestriction(builder, inputRestriction);
     MutatorSettings.addAssistGoalScore(builder, assistGoalScore);
@@ -229,7 +265,7 @@ public final class MutatorSettings extends Table {
     return MutatorSettings.endMutatorSettings(builder);
   }
 
-  public static void startMutatorSettings(FlatBufferBuilder builder) { builder.startTable(32); }
+  public static void startMutatorSettings(FlatBufferBuilder builder) { builder.startTable(38); }
   public static void addMatchLength(FlatBufferBuilder builder, int matchLength) { builder.addByte(0, (byte) matchLength, (byte) 0); }
   public static void addMaxScore(FlatBufferBuilder builder, int maxScore) { builder.addByte(1, (byte) maxScore, (byte) 0); }
   public static void addMultiBall(FlatBufferBuilder builder, int multiBall) { builder.addByte(2, (byte) multiBall, (byte) 0); }
@@ -262,6 +298,12 @@ public final class MutatorSettings extends Table {
   public static void addAssistGoalScore(FlatBufferBuilder builder, int assistGoalScore) { builder.addByte(29, (byte) assistGoalScore, (byte) 0); }
   public static void addInputRestriction(FlatBufferBuilder builder, int inputRestriction) { builder.addByte(30, (byte) inputRestriction, (byte) 0); }
   public static void addScoringRule(FlatBufferBuilder builder, int scoringRule) { builder.addByte(31, (byte) scoringRule, (byte) 0); }
+  public static void addTriTipMode(FlatBufferBuilder builder, int triTipMode) { builder.addByte(32, (byte) triTipMode, (byte) 0); }
+  public static void addLockedDamagePhase(FlatBufferBuilder builder, int lockedDamagePhase) { builder.addByte(33, (byte) lockedDamagePhase, (byte) 0); }
+  public static void addSpawnDemoball(FlatBufferBuilder builder, int spawnDemoball) { builder.addByte(34, (byte) spawnDemoball, (byte) 0); }
+  public static void addBoostRestriction(FlatBufferBuilder builder, int boostRestriction) { builder.addByte(35, (byte) boostRestriction, (byte) 0); }
+  public static void addKeepUpRules(FlatBufferBuilder builder, int keepUpRules) { builder.addByte(36, (byte) keepUpRules, (byte) 0); }
+  public static void addMatchAdmin(FlatBufferBuilder builder, int matchAdmin) { builder.addByte(37, (byte) matchAdmin, (byte) 0); }
   public static int endMutatorSettings(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
@@ -343,6 +385,18 @@ public final class MutatorSettings extends Table {
     _o.setInputRestriction(_oInputRestriction);
     int _oScoringRule = scoringRule();
     _o.setScoringRule(_oScoringRule);
+    int _oTriTipMode = triTipMode();
+    _o.setTriTipMode(_oTriTipMode);
+    int _oLockedDamagePhase = lockedDamagePhase();
+    _o.setLockedDamagePhase(_oLockedDamagePhase);
+    int _oSpawnDemoball = spawnDemoball();
+    _o.setSpawnDemoball(_oSpawnDemoball);
+    int _oBoostRestriction = boostRestriction();
+    _o.setBoostRestriction(_oBoostRestriction);
+    int _oKeepUpRules = keepUpRules();
+    _o.setKeepUpRules(_oKeepUpRules);
+    int _oMatchAdmin = matchAdmin();
+    _o.setMatchAdmin(_oMatchAdmin);
   }
   public static int pack(FlatBufferBuilder builder, MutatorSettingsT _o) {
     if (_o == null) return 0;
@@ -379,7 +433,13 @@ public final class MutatorSettings extends Table {
       _o.getAerialGoalScore(),
       _o.getAssistGoalScore(),
       _o.getInputRestriction(),
-      _o.getScoringRule());
+      _o.getScoringRule(),
+      _o.getTriTipMode(),
+      _o.getLockedDamagePhase(),
+      _o.getSpawnDemoball(),
+      _o.getBoostRestriction(),
+      _o.getKeepUpRules(),
+      _o.getMatchAdmin());
   }
 }
 

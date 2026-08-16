@@ -68,6 +68,14 @@ public final class CustomBot extends Table {
    * Players in the hivemind must have the same name, team, run command, and agent id.
    */
   public boolean hivemind() { int o = __offset(14); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  /**
+   * User-defined environment variables to pass to the bot process.
+   */
+  public rlbot.flat.EnvironmentVariable environment(int j) { return environment(new rlbot.flat.EnvironmentVariable(), j); }
+  public rlbot.flat.EnvironmentVariable environment(rlbot.flat.EnvironmentVariable obj, int j) { int o = __offset(16); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int environmentLength() { int o = __offset(16); return o != 0 ? __vector_len(o) : 0; }
+  public rlbot.flat.EnvironmentVariable.Vector environmentVector() { return environmentVector(new rlbot.flat.EnvironmentVariable.Vector()); }
+  public rlbot.flat.EnvironmentVariable.Vector environmentVector(rlbot.flat.EnvironmentVariable.Vector obj) { int o = __offset(16); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createCustomBot(FlatBufferBuilder builder,
       int nameOffset,
@@ -75,8 +83,10 @@ public final class CustomBot extends Table {
       int runCommandOffset,
       int loadoutOffset,
       int agentIdOffset,
-      boolean hivemind) {
-    builder.startTable(6);
+      boolean hivemind,
+      int environmentOffset) {
+    builder.startTable(7);
+    CustomBot.addEnvironment(builder, environmentOffset);
     CustomBot.addAgentId(builder, agentIdOffset);
     CustomBot.addLoadout(builder, loadoutOffset);
     CustomBot.addRunCommand(builder, runCommandOffset);
@@ -86,13 +96,16 @@ public final class CustomBot extends Table {
     return CustomBot.endCustomBot(builder);
   }
 
-  public static void startCustomBot(FlatBufferBuilder builder) { builder.startTable(6); }
+  public static void startCustomBot(FlatBufferBuilder builder) { builder.startTable(7); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
   public static void addRootDir(FlatBufferBuilder builder, int rootDirOffset) { builder.addOffset(1, rootDirOffset, 0); }
   public static void addRunCommand(FlatBufferBuilder builder, int runCommandOffset) { builder.addOffset(2, runCommandOffset, 0); }
   public static void addLoadout(FlatBufferBuilder builder, int loadoutOffset) { builder.addOffset(3, loadoutOffset, 0); }
   public static void addAgentId(FlatBufferBuilder builder, int agentIdOffset) { builder.addOffset(4, agentIdOffset, 0); }
   public static void addHivemind(FlatBufferBuilder builder, boolean hivemind) { builder.addBoolean(5, hivemind, false); }
+  public static void addEnvironment(FlatBufferBuilder builder, int environmentOffset) { builder.addOffset(6, environmentOffset, 0); }
+  public static int createEnvironmentVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startEnvironmentVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endCustomBot(FlatBufferBuilder builder) {
     int o = builder.endTable();
     builder.required(o, 4);  // name
@@ -126,6 +139,9 @@ public final class CustomBot extends Table {
     _o.setAgentId(_oAgentId);
     boolean _oHivemind = hivemind();
     _o.setHivemind(_oHivemind);
+    rlbot.flat.EnvironmentVariableT[] _oEnvironment = new rlbot.flat.EnvironmentVariableT[environmentLength()];
+    for (int _j = 0; _j < environmentLength(); ++_j) {_oEnvironment[_j] = (environment(_j) != null ? environment(_j).unpack() : null);}
+    _o.setEnvironment(_oEnvironment);
   }
   public static int pack(FlatBufferBuilder builder, CustomBotT _o) {
     if (_o == null) return 0;
@@ -134,6 +150,13 @@ public final class CustomBot extends Table {
     int _runCommand = _o.getRunCommand() == null ? 0 : builder.createString(_o.getRunCommand());
     int _loadout = _o.getLoadout() == null ? 0 : rlbot.flat.PlayerLoadout.pack(builder, _o.getLoadout());
     int _agentId = _o.getAgentId() == null ? 0 : builder.createString(_o.getAgentId());
+    int _environment = 0;
+    if (_o.getEnvironment() != null) {
+      int[] __environment = new int[_o.getEnvironment().length];
+      int _j = 0;
+      for (rlbot.flat.EnvironmentVariableT _e : _o.getEnvironment()) { __environment[_j] = rlbot.flat.EnvironmentVariable.pack(builder, _e); _j++;}
+      _environment = createEnvironmentVector(builder, __environment);
+    }
     return createCustomBot(
       builder,
       _name,
@@ -141,7 +164,8 @@ public final class CustomBot extends Table {
       _runCommand,
       _loadout,
       _agentId,
-      _o.getHivemind());
+      _o.getHivemind(),
+      _environment);
   }
 }
 

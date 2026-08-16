@@ -25,6 +25,7 @@ public class GamePacketT {
   private rlbot.flat.BallInfoT[] balls;
   private rlbot.flat.MatchInfoT matchInfo;
   private rlbot.flat.TeamInfoT[] teams;
+  private int[] tiles;
 
   public rlbot.flat.PlayerInfoT[] getPlayers() { return players; }
 
@@ -46,6 +47,10 @@ public class GamePacketT {
 
   public void setTeams(rlbot.flat.TeamInfoT[] teams) { this.teams = teams; }
 
+  public int[] getTiles() { return tiles; }
+
+  public void setTiles(int[] tiles) { this.tiles = tiles; }
+
 
   public GamePacketT() {
     this.players = null;
@@ -53,6 +58,7 @@ public class GamePacketT {
     this.balls = null;
     this.matchInfo = null;
     this.teams = null;
+    this.tiles = null;
   }
 }
 

@@ -120,6 +120,22 @@ public final class InterfacePacket extends Table {
         _oMessageValue = message(new rlbot.flat.RenderingStatus());
         _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.RenderingStatus) _oMessageValue).unpack() : null);
         break;
+      case rlbot.flat.InterfaceMessage.PingRequest:
+        _oMessageValue = message(new rlbot.flat.PingRequest());
+        _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.PingRequest) _oMessageValue).unpack() : null);
+        break;
+      case rlbot.flat.InterfaceMessage.PingResponse:
+        _oMessageValue = message(new rlbot.flat.PingResponse());
+        _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.PingResponse) _oMessageValue).unpack() : null);
+        break;
+      case rlbot.flat.InterfaceMessage.UpdatePerformanceMonitor:
+        _oMessageValue = message(new rlbot.flat.UpdatePerformanceMonitor());
+        _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.UpdatePerformanceMonitor) _oMessageValue).unpack() : null);
+        break;
+      case rlbot.flat.InterfaceMessage.ConsoleCommand:
+        _oMessageValue = message(new rlbot.flat.ConsoleCommand());
+        _oMessage.setValue(_oMessageValue != null ? ((rlbot.flat.ConsoleCommand) _oMessageValue).unpack() : null);
+        break;
       default: break;
     }
     _o.setMessage(_oMessage);

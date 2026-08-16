@@ -23,7 +23,6 @@ public class DesiredGameStateT {
   private rlbot.flat.DesiredBallStateT[] ballStates;
   private rlbot.flat.DesiredCarStateT[] carStates;
   private rlbot.flat.DesiredMatchInfoT matchInfo;
-  private rlbot.flat.ConsoleCommandT[] consoleCommands;
 
   public rlbot.flat.DesiredBallStateT[] getBallStates() { return ballStates; }
 
@@ -37,16 +36,11 @@ public class DesiredGameStateT {
 
   public void setMatchInfo(rlbot.flat.DesiredMatchInfoT matchInfo) { this.matchInfo = matchInfo; }
 
-  public rlbot.flat.ConsoleCommandT[] getConsoleCommands() { return consoleCommands; }
-
-  public void setConsoleCommands(rlbot.flat.ConsoleCommandT[] consoleCommands) { this.consoleCommands = consoleCommands; }
-
 
   public DesiredGameStateT() {
     this.ballStates = null;
     this.carStates = null;
     this.matchInfo = null;
-    this.consoleCommands = null;
   }
 }
 
