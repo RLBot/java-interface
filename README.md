@@ -1,5 +1,7 @@
 # RLBot Java Interface
 
+![Maven Central Version](https://img.shields.io/maven-central/v/org.rlbot.commons/rlbot-framework)
+
 A library to create Rocket League bots by interfacing with the [RLBot](https://rlbot.org/) v5 framework through Java.
 
 ## Example Usage
@@ -188,3 +190,4 @@ Prerequisites:
 Steps:
 - Update `<version>` in `pom.xml`. (Use postfix `-SNAPSHOT` to upload a beta version)
 - Run `mvn deploy`.
+- Publish the validated artifact at https://central.sonatype.com/publishing/deployments
