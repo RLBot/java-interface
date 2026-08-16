@@ -69,7 +69,7 @@ public final class PlayerInfo extends Table {
    * up to an additional 0.2 seconds depending how long the jump button was pressed for the first jump.
    * Note that falling off a surface instead of jumping, does not activate the dodge timeout, and making a dodge/double jump possible indefinitely.
    * This is commonly known as a flip reset.
-   * The car is holding a flip reset if `air_state == InAir && !has_jumped && !has_double_jumped && !has_dodged`.
+   * The car is holding a flip reset if `air_state == InAir and !has_jumped and !has_double_jumped and !has_dodged`.
    */
   public float dodgeTimeout() { int o = __offset(16); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
   /**
@@ -134,7 +134,7 @@ public final class PlayerInfo extends Table {
    * See dodge_timeout to know if a dodge/double jump is temporarily available.
    * Note that falling off a surface instead of jumping, does not activate the dodge timeout, and making a dodge/double jump possible indefinitely.
    * This is commonly known as a flip reset.
-   * The car is holding a flip reset if `air_state == InAir && !has_jumped && !has_double_jumped && !has_dodged`.
+   * The car is holding a flip reset if `air_state == InAir and !has_jumped and !has_double_jumped and !has_dodged`.
    */
   public boolean hasJumped() { int o = __offset(36); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
   /**
