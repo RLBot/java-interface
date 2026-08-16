@@ -1,5 +1,6 @@
 package rlbot.commons.protocol;
 
+import rlbot.commons.desired.DesiredGameStateBuilder;
 import rlbot.flat.*;
 
 import java.io.FileNotFoundException;
@@ -172,6 +173,8 @@ public class RLBotInterface implements Runnable {
      * <p>
      * Use state-setting to debug your bot's behavior in specific scenarios or create a meme bot
      * that alters the rules of the game.
+     * <p>
+     * See also {@link #gameStateBuilder()} for a builder pattern interface (typically easier to use).
      *
      * @param gameState the {@link DesiredGameStateT} to send.
      */
@@ -180,6 +183,31 @@ public class RLBotInterface implements Runnable {
         msg.setType(InterfaceMessage.DesiredGameState);
         msg.setValue(gameState);
         sendFlatbufferMsg(msg);
+    }
+
+    /**
+     * Start constructing a {@link DesiredGameStateT} through a builder pattern.
+     * A desired game state message will modify the current state of the game. This is commonly also
+     * referred to as state-setting and must be enabled at the start of the match to be legal.
+     * <p>
+     * Use state-setting to debug your bot's behavior in specific scenarios or create a meme bot
+     * that alters the rules of the game.
+     * <p>
+     * Only fields that are explicitly set will change.
+     * <p>
+     * Example usage:
+     * <pre>
+     *     {@code
+     *         rlbot.gameStateBuilder()
+     *                 .matchInfo(m -> m.gravityZ(-1000))
+     *                 .car(0, c -> c.boost(100).location(0, 0, 50))
+     *                 .ball(0, b -> b.location(-3000, 0, 100).velocity(0, 0, 0))
+     *                 .buildAndSend();
+     *     }
+     * </pre>
+     */
+    public DesiredGameStateBuilder gameStateBuilder() {
+        return new DesiredGameStateBuilder(this);
     }
 
     /**
