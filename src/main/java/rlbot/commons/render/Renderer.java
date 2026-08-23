@@ -40,6 +40,11 @@ public class Renderer extends RLBotListenerAdapter {
     private boolean isRendering = false;
 
     /**
+     * Name of group if no group id is specified
+     */
+    private String defaultGroupId = DEFAULT_GROUP;
+
+    /**
      * Name of the most recently begun render group.
      */
     private String currentGroupId = DEFAULT_GROUP;
@@ -57,12 +62,17 @@ public class Renderer extends RLBotListenerAdapter {
     private final HashSet<String> activeGroupIds = new HashSet<>();
 
     public Renderer(RLBotInterface rlbot) {
-        this(rlbot, 1920, 1080);
+        this(rlbot, DEFAULT_GROUP, 1920, 1080);
     }
 
-    public Renderer(RLBotInterface rlbot, int screenWidth, int screenHeight) {
+    public Renderer(RLBotInterface rlbot, String defaultGroupId) {
+        this(rlbot, defaultGroupId, 1920, 1080);
+    }
+
+    public Renderer(RLBotInterface rlbot, String defaultGroupId, int screenWidth, int screenHeight) {
         this.rlbot = rlbot;
         rlbot.addListener(this);
+        this.defaultGroupId = defaultGroupId;
         assumeScreenSize(screenWidth, screenHeight);
     }
 
@@ -139,7 +149,7 @@ public class Renderer extends RLBotListenerAdapter {
      * A render group is a collection of render messages that persist until overridden or cleared.
      */
     public void begin() {
-        begin(DEFAULT_GROUP, null);
+        begin(defaultGroupId, null);
     }
 
     /**
@@ -367,6 +377,20 @@ public class Renderer extends RLBotListenerAdapter {
      * @param y          y position of text in pixel coordinates.
      * @param scale      scale of text.
      * @param foreground color of text. Uses the default color if null.
+     */
+    public void drawText2D(String text, float x, float y, float scale, Color foreground) {
+        drawText2D(text, x, y, scale, foreground, null, TextHAlign.Left, TextVAlign.Top);
+    }
+
+    /**
+     * Draw text in 2D space. x and y uses pixel coordinates based on the declared screen size.
+     * The characters of the font are 20 pixels wide and 10 pixels tall when scale is 1.
+     *
+     * @param text       the text to draw.
+     * @param x          x position of text in pixel coordinates.
+     * @param y          y position of text in pixel coordinates.
+     * @param scale      scale of text.
+     * @param foreground color of text. Uses the default color if null.
      * @param background color of background for the text. Uses transparent if null.
      * @param hAlign     horizontal alignment.
      * @param vAlign     vertical alignment.
@@ -415,6 +439,19 @@ public class Renderer extends RLBotListenerAdapter {
      * @param position   position of text in pixel coordinates.
      * @param scale      scale of text.
      * @param foreground color of text. Uses the default color if null.
+     */
+    public void drawText2D(String text, Vector2 position, float scale, Color foreground) {
+        drawText2D(text, position.x(), position.y(), scale, foreground);
+    }
+
+    /**
+     * Draw text in 2D space. Position uses pixel coordinates based on the declared screen size.
+     * The characters of the font are 20 pixels wide and 10 pixels tall when scale is 1.
+     *
+     * @param text       the text to draw.
+     * @param position   position of text in pixel coordinates.
+     * @param scale      scale of text.
+     * @param foreground color of text. Uses the default color if null.
      * @param background color of background for the text. Uses transparent if null.
      * @param hAlign     horizontal alignment.
      * @param vAlign     vertical alignment.
@@ -444,6 +481,19 @@ public class Renderer extends RLBotListenerAdapter {
      */
     public void drawText3D(String text, RenderAnchorT anchor, float scale) {
         drawText3D(text, anchor, scale, color, null, TextHAlign.Left, TextVAlign.Top);
+    }
+
+    /**
+     * Draw text in 3D space.
+     * Characters of the font are 20 pixels tall and 10 pixels wide when scale is 1.
+     *
+     * @param text       the text to draw.
+     * @param anchor     the anchor to draw the text at.
+     * @param scale      the scale of the text.
+     * @param foreground color of text. Uses the default color if null.
+     */
+    public void drawText3D(String text, RenderAnchorT anchor, float scale, Color foreground) {
+        drawText3D(text, anchor, scale, foreground, null, TextHAlign.Left, TextVAlign.Top);
     }
 
     /**
@@ -501,6 +551,19 @@ public class Renderer extends RLBotListenerAdapter {
      * @param position   the position to draw the text at.
      * @param scale      the scale of the text.
      * @param foreground color of text. Uses the default color if null.
+     */
+    public void drawText3D(String text, Vector3 position, float scale, Color foreground) {
+        drawText3D(text, anchor(position), scale,  foreground);
+    }
+
+    /**
+     * Draw text in 3D space.
+     * Characters of the font are 20 pixels tall and 10 pixels wide when scale is 1.
+     *
+     * @param text       the text to draw.
+     * @param position   the position to draw the text at.
+     * @param scale      the scale of the text.
+     * @param foreground color of text. Uses the default color if null.
      * @param background color of background for the text. Uses transparent if null.
      * @param hAlign     horizontal alignment.
      * @param vAlign     vertical alignment.
@@ -519,7 +582,21 @@ public class Renderer extends RLBotListenerAdapter {
      * @param height height of the rectangle in pixels.
      */
     public void drawRect2D(float x, float y, float width, float height) {
-        drawRect2D(x, y, width, height, color, true);
+        drawRect2D(x, y, width, height, color, TextHAlign.Left, TextVAlign.Top);
+    }
+
+    /**
+     * Draw a rectangle in 2D space.
+     * X, y, width, and height uses pixel coordinates based on the declared screen size.
+     *
+     * @param x      x position of the rectangle in pixel coordinates.
+     * @param y      y position of the rectangle in pixel coordinates.
+     * @param width  width of the rectangle in pixels.
+     * @param height height of the rectangle in pixels.
+     * @param color  color of the rectangle. Uses the default color if null.
+     */
+    public void drawRect2D(float x, float y, float width, float height, Color color) {
+        drawRect2D(x, y, width, height, color, TextHAlign.Left, TextVAlign.Top);
     }
 
     /**
@@ -531,15 +608,18 @@ public class Renderer extends RLBotListenerAdapter {
      * @param width    width of the rectangle in pixels.
      * @param height   height of the rectangle in pixels.
      * @param color    color of the rectangle. Uses the default color if null.
-     * @param centered whether the rectangle should be centered at (x, y), or if (x, y) is the top left corner.
+     * @param hAlign   horizontal alignment.
+     * @param vAlign   vertical alignment.
      */
-    public void drawRect2D(float x, float y, float width, float height, Color color, boolean centered) {
+    public void drawRect2D(float x, float y, float width, float height, Color color, int hAlign, int vAlign) {
         var rect = new Rect2DT();
         rect.setX(x * screenWidthScale);
         rect.setY(y * screenHeightScale);
         rect.setWidth(width * screenWidthScale);
         rect.setHeight(height * screenHeightScale);
         rect.setColor((color != null ? color : this.color).toColorT());
+        rect.setHAlign(hAlign);
+        rect.setVAlign(vAlign);
         draw(message(RenderType.Rect2D, rect));
     }
 
@@ -551,7 +631,7 @@ public class Renderer extends RLBotListenerAdapter {
      * @param size     size of the rectangle in pixels.
      */
     public void drawRect2D(Vector2 position, Vector2 size) {
-        drawRect2D(position.x(), position.y(), size.x(), size.y(), color, true);
+        drawRect2D(position.x(), position.y(), size.x(), size.y(), color, TextHAlign.Left, TextVAlign.Top);
     }
 
     /**
@@ -561,10 +641,23 @@ public class Renderer extends RLBotListenerAdapter {
      * @param position position of the rectangle in pixel coordinates.
      * @param size     size of the rectangle in pixels.
      * @param color    color of the rectangle. Uses the default color if null.
-     * @param centered whether the rectangle should be centered at the position, or if the position is the top left corner.
      */
-    public void drawRect2D(Vector2 position, Vector2 size, Color color, boolean centered) {
-        drawRect2D(position.x(), position.y(), size.x(), size.y(), color, centered);
+    public void drawRect2D(Vector2 position, Vector2 size, Color color) {
+        drawRect2D(position.x(), position.y(), size.x(), size.y(), color, TextHAlign.Left, TextVAlign.Top);
+    }
+
+    /**
+     * Draw a rectangle in 2D space.
+     * Position and size uses pixel coordinates based on the declared screen size.
+     *
+     * @param position position of the rectangle in pixel coordinates.
+     * @param size     size of the rectangle in pixels.
+     * @param color    color of the rectangle. Uses the default color if null.
+     * @param hAlign   horizontal alignment.
+     * @param vAlign   vertical alignment.
+     */
+    public void drawRect2D(Vector2 position, Vector2 size, Color color, int hAlign, int vAlign) {
+        drawRect2D(position.x(), position.y(), size.x(), size.y(), color, hAlign, vAlign);
     }
 
     /**
